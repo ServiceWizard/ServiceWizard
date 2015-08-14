@@ -5,7 +5,7 @@
  * Health Innovation Technologies, Inc. ("Confidential Information").
  ****************************************************************/
 
-package com.servicewizard;
+package com.servicewizard.generation;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
