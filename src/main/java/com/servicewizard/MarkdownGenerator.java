@@ -20,7 +20,18 @@ public class MarkdownGenerator {
 
 			for (ServiceMethod method : service.getMethods()) {
 				String verbName = "[" + method.getVerb() + "]";
-				System.out.println(String.format("## %-8s %s %s", verbName, method.getRelativePath(), method.getQueryParameters()));
+
+				// Join the query parameters
+				String paramString = "";
+				List<String> parameters = method.getQueryParameters();
+				if (!parameters.isEmpty()) {
+					paramString += "(" + parameters.get(0);
+					for (int i = 1; i<parameters.size(); ++i)
+						paramString += ", " + parameters.get(i);
+					paramString += ")";
+				}
+
+				System.out.println(String.format("## %-8s %s%s", verbName, method.getRelativePath(), paramString));
 			}
 			System.out.println();
 		}
