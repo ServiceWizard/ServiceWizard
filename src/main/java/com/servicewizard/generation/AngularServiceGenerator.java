@@ -50,7 +50,7 @@ public class AngularServiceGenerator {
 			output.println(String.format("%svar request = {", whitespace));
 
 			indent();
-			output.println(String.format("%surl: %s,", whitespace, method.getRelativePath()));
+			output.println(String.format("%surl: '%s',", whitespace, method.getRelativePath()));
 			output.println(String.format("%smethod: '%s',", whitespace, method.getVerb()));
 
 			if (!method.getQueryParameters().isEmpty())
