@@ -4,8 +4,8 @@ apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'fatjar'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 group = 'com.servicewizard'
 version = '1.0.0a'
@@ -32,11 +32,17 @@ dependencies {
 mainClassName = 'com.servicewizard.Main'
 
 run {
-    args 'server', 'config.yml'
+    args 'com.sampleapp', 'output', 'ToDoApp', 'http://localhost:8080'
 }
 
 fatJar {
     manifest {
         attributes 'Main-Class': mainClassName
     }
+}
+
+task sample (type:JavaExec) {
+	main 'com.sampleapp.ToDoAPI'
+	classpath sourceSets.main.runtimeClasspath
+	args 'server', 'config.yml'
 }

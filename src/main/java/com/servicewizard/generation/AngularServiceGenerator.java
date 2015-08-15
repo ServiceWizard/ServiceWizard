@@ -15,19 +15,19 @@ import java.io.PrintStream;
 
 public class AngularServiceGenerator {
 
-	public void generate(String moduleName, Service service) {
-		generate(moduleName, service, System.out);
+	public void generate(String moduleName, String urlBase, Service service) {
+		generate(moduleName, urlBase, service, System.out);
 	}
 
-	public void generate(String moduleName, Service service, String fileName) {
+	public void generate(String moduleName, String urlBase, Service service, String fileName) {
 		try {
-			generate(moduleName, service, new PrintStream(fileName));
+			generate(moduleName, urlBase, service, new PrintStream(fileName));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void generate(String moduleName, Service service, PrintStream output) {
+	private void generate(String moduleName, String urlBase, Service service, PrintStream output) {
 		indentation = 0;
 		whitespace = "";
 
@@ -35,6 +35,7 @@ public class AngularServiceGenerator {
 		output.println(String.format("%s.factory('%s', ['$http', function($http) {", whitespace, service.getName()));
 
 		indent();
+		output.println(String.format("%svar urlBase = '%s';", whitespace, urlBase));
 		output.println(String.format("%sreturn {", whitespace));
 
 		indent();
@@ -50,7 +51,7 @@ public class AngularServiceGenerator {
 			output.println(String.format("%svar request = {", whitespace));
 
 			indent();
-			output.println(String.format("%surl: '%s',", whitespace, method.getRelativePath()));
+			output.println(String.format("%surl: urlBase + '%s',", whitespace, method.getRelativePath()));
 			output.println(String.format("%smethod: '%s',", whitespace, method.getVerb()));
 
 			if (!method.getQueryParameters().isEmpty())

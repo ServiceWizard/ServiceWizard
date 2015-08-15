@@ -5,11 +5,12 @@
  * Health Innovation Technologies, Inc. ("Confidential Information").
  ****************************************************************/
 
-package com.sampleapp.service;
+package com.sampleapp.resource;
 
 import com.sampleapp.model.ToDoItem;
 import com.servicewizard.ServiceWizardService;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,23 +32,40 @@ public class ToDoItemService {
 	@GET
 	@Path("/all")
 	public List<ToDoItem> allItems() {
-		return new LinkedList<>();
+		return items;
 	}
 
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void create(ToDoItem item) {
+		items.add(item);
 	}
 
 	@GET
 	@Path("/get")
 	public ToDoItem get(@QueryParam("id") long id) {
-		return new ToDoItem();
+		return items.stream()
+			.filter(item -> item.getId() == id)
+			.findFirst()
+			.get();
 	}
 
 	@DELETE
 	@Path("/delete")
 	public void delete(@QueryParam("id") long id) {
+		ToDoItem item = get(id);
+		if (item != null)
+			items.remove(item);
 	}
+
+	public ToDoItemService() {
+		items = new LinkedList<>();
+		items.add(new ToDoItem(1, "Take out the trash", new Date()));
+		items.add(new ToDoItem(2, "Brush my teeth", new Date()));
+		items.add(new ToDoItem(3, "Walk the dog", new Date()));
+		items.add(new ToDoItem(4, "Do my homework", new Date()));
+	}
+
+	private List<ToDoItem> items;
 }
