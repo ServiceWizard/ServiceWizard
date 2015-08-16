@@ -33,6 +33,7 @@ angular.module('ToDoApp')
 .factory('TodoService', ['$http', function($http) {
     var urlBase = 'http://localhost:8080';
     return {
+
         get: function(params) {
             var request = {
                 url: urlBase + '/todoItem/get',
@@ -42,10 +43,11 @@ angular.module('ToDoApp')
             return $http(request);
         },
 
-        create: function() {
+        create: function(data) {
             var request = {
                 url: urlBase + '/todoItem/create',
                 method: 'POST',
+                data: data,
             };
             return $http(request);
         },
