@@ -35,7 +35,15 @@ public class AngularServiceGenerator {
 		indent();
 		for (ServiceMethod method : service.getMethods()) {
 			output.println();
-			if (!method.getQueryParameters().isEmpty())
+
+			// Method parameters
+			boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
+			boolean hasRequestBody = method.hasRequestBody();
+			if (hasRequestBody && hasQueryParameters)
+				output.println(String.format("%s%s: function(data, params) {", whitespace, method.getName()));
+			else if (hasRequestBody)
+				output.println(String.format("%s%s: function(data) {", whitespace, method.getName()));
+			else if (hasQueryParameters)
 				output.println(String.format("%s%s: function(params) {", whitespace, method.getName()));
 			else
 				output.println(String.format("%s%s: function() {", whitespace, method.getName()));
@@ -48,7 +56,10 @@ public class AngularServiceGenerator {
 			output.println(String.format("%surl: urlBase + '%s',", whitespace, method.getRelativePath()));
 			output.println(String.format("%smethod: '%s',", whitespace, method.getVerb()));
 
-			if (!method.getQueryParameters().isEmpty())
+			if (hasRequestBody)
+				output.println(String.format("%sdata: data,", whitespace));
+
+			if (hasQueryParameters)
 				output.println(String.format("%sparams: params,", whitespace));
 
 			unindent();

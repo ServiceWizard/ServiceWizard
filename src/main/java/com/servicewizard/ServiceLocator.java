@@ -76,15 +76,23 @@ public class ServiceLocator {
 			// TODO - does Path have a default value?
 		}
 
-		// Query parameters
-		for (Annotation[] paramAnnotaitons : classMethod.getParameterAnnotations()) {
-			for (Annotation paramAnnotation : paramAnnotaitons) {
+		// Query parameters and request body
+		boolean hasRequestBody = false;
+		for (Annotation[] paramAnnotations : classMethod.getParameterAnnotations()) {
+			boolean paramIsQueryParam = false;
+			for (Annotation paramAnnotation : paramAnnotations) {
 				if (paramAnnotation.annotationType().equals(QueryParam.class)) {
+					paramIsQueryParam = true;
 					QueryParam queryParam = (QueryParam)paramAnnotation;
 					serviceMethod.addQueryParameter(queryParam.value());
 				}
 			}
+
+			// If this parameter is not a query param, it is the request body
+			if (!paramIsQueryParam)
+				hasRequestBody = true;
 		}
+		serviceMethod.hasRequestBody(hasRequestBody);
 
 		return serviceMethod;
 	}

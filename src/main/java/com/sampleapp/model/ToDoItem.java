@@ -15,12 +15,27 @@ public class ToDoItem {
 		return id;
 	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Date getDueDate() {
 		return dueDate;
+	}
+
+	public void setDueDate(Date date) {
+		dueDate = date;
+	}
+
+	public ToDoItem() {
 	}
 
 	public ToDoItem(long id, String description, Date dueDate) {

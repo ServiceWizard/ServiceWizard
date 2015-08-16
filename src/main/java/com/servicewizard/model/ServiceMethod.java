@@ -34,6 +34,14 @@ public class ServiceMethod {
 		queryParameters.add(param);
 	}
 
+	public boolean hasRequestBody() {
+		return hasRequestBody;
+	}
+
+	public void hasRequestBody(boolean hasRequestBody) {
+		this.hasRequestBody = hasRequestBody;
+	}
+
 	public ServiceMethod(String name) {
 		this.name = name;
 		queryParameters = new LinkedList<>();
@@ -43,4 +51,5 @@ public class ServiceMethod {
 	private HttpVerb verb;
 	private String relativePath;
 	private List<String> queryParameters;
+	private boolean hasRequestBody;
 }
