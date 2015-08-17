@@ -25,14 +25,14 @@ buildscript {
 }
 
 dependencies {
-    compile 'io.dropwizard:dropwizard-core:0.7.1', 'org.reflections:reflections:0.9.9-RC1'
+    compile 'io.dropwizard:dropwizard-core:0.7.1', 'org.reflections:reflections:0.9.9'
     testCompile 'junit:junit:4.11'
 }
 
 mainClassName = 'com.servicewizard.Main'
 
 run {
-    args 'com.sampleapp', 'output', 'ToDoApp', 'http://localhost:8080'
+    args 'com.sampleapp.resource', 'output', 'ToDoApp', 'http://localhost:8080'
 }
 
 fatJar {
