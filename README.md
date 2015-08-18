@@ -13,16 +13,25 @@ public class ToDoItemService {
 
 	@POST
 	@Path("/create")
+	@ServiceWizardMethod(
+		title="Create todo",
+		description="Creates a todo item."
+	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void create(ToDoItem item) {
-		//...
+		// ...implementation...
 	}
 
 	@GET
 	@Path("/get")
+	@ServiceWizardMethod(
+		title="Get todo item",
+		description="Gets an existing todo item by id."
+	)
 	public ToDoItem get(@QueryParam("id") long id) {
-		//...
+		// ...implementation...
 	}
+
 }
 ```
 	
@@ -33,21 +42,6 @@ angular.module('ToDoApp')
 .factory('TodoService', ['$http', function($http) {
     var urlBase = 'http://localhost:8080';
     return {
-		/**
-         * Get todo item
-         *
-         * Gets an existing todo item by id.
-         * Params:
-         *   id
-        */
-        get: function(params) {
-            var request = {
-                url: urlBase + '/todoItem/get',
-                method: 'GET',
-                params: params,
-            };
-            return $http(request);
-        },
 
         /**
          * Create todo
@@ -62,17 +56,33 @@ angular.module('ToDoApp')
             };
             return $http(request);
         },
+
+        /**
+         * Get todo item
+         *
+         * Gets an existing todo item by id.
+         * Params:
+         *   id
+        */
+        get: function(params) {
+            var request = {
+                url: urlBase + '/todoItem/get',
+                method: 'GET',
+                params: params,
+            };
+            return $http(request);
+        },
     };
 }]);
 ```
 	
 It can also create documentation for this API in Markdown:
 # TodoService
-## [GET]    /todoItem/get(id)
-Get todo item
-
-Gets an existing todo item by id.
 ## [POST]   /todoItem/create
 Create todo
 
 Creates a todo item.
+## [GET]    /todoItem/get(id)
+Get todo item
+
+Gets an existing todo item by id.
