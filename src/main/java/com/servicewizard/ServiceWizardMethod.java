@@ -7,7 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = ElementType.TYPE)
-public @interface ServiceWizardService {
-	public String name();
+@Target(value = ElementType.METHOD)
+public @interface ServiceWizardMethod {
+	public String title();
+
+	public String description();
 }

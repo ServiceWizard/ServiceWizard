@@ -60,6 +60,13 @@ public class ServiceLocator {
 	private ServiceMethod processMethod(String resourcePath, Method classMethod) {
 		ServiceMethod serviceMethod = new ServiceMethod(classMethod.getName());
 
+		// Pull documentation from annotation
+		if (classMethod.isAnnotationPresent(ServiceWizardMethod.class)) {
+			ServiceWizardMethod methodAnnotation = classMethod.getAnnotation(ServiceWizardMethod.class);
+			serviceMethod.setTitle(methodAnnotation.title());
+			serviceMethod.setDescription(methodAnnotation.description());
+		}
+
 		// Look for verb annotations
 		if (classMethod.isAnnotationPresent(GET.class))
 			serviceMethod.setVerb(HttpVerb.GET);

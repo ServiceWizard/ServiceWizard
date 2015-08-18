@@ -7,6 +7,7 @@ import com.servicewizard.model.ServiceMethod;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MarkdownGenerator {
 
@@ -36,16 +37,23 @@ public class MarkdownGenerator {
 
 				// Join the query parameters
 				String paramString = "";
-				List<String> parameters = method.getQueryParameters();
-				if (!parameters.isEmpty()) {
-					paramString += "(" + parameters.get(0);
-					for (int i = 1; i<parameters.size(); ++i)
-						paramString += ", " + parameters.get(i);
-					paramString += ")";
+				if (!method.getQueryParameters().isEmpty()) {
+					paramString = method.getQueryParameters()
+					.stream()
+					.collect(Collectors.joining(",", "(", ")"));
 				}
 
 				output.println(String.format("## %-8s %s%s", verbName, method.getRelativePath(), paramString));
+
+				if (method.getTitle() != null) {
+					output.println(method.getTitle());
+					output.println();
+				}
+
+				if (method.getDescription() != null)
+					output.println(method.getDescription());
 			}
+
 			output.println();
 		}
 	}

@@ -2,6 +2,7 @@
 package com.sampleapp.resource;
 
 import com.sampleapp.model.ToDoItem;
+import com.servicewizard.ServiceWizardMethod;
 import com.servicewizard.ServiceWizardService;
 
 import java.util.Date;
@@ -25,12 +26,20 @@ public class ToDoItemService {
 
 	@GET
 	@Path("/all")
+	@ServiceWizardMethod(
+		title="Get all",
+		description="Gets all active todo items."
+	)
 	public List<ToDoItem> allItems() {
 		return items;
 	}
 
 	@POST
 	@Path("/create")
+	@ServiceWizardMethod(
+		title="Create todo",
+		description="Creates a todo item."
+	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void create(ToDoItem item) {
 		items.add(item);
@@ -38,6 +47,10 @@ public class ToDoItemService {
 
 	@GET
 	@Path("/get")
+	@ServiceWizardMethod(
+		title="Get todo item",
+		description="Gets an existing todo item by id."
+	)
 	public ToDoItem get(@QueryParam("id") long id) {
 		return items.stream()
 			.filter(item -> item.getId() == id)

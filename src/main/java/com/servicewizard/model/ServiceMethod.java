@@ -10,6 +10,22 @@ public class ServiceMethod {
 		return name;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public HttpVerb getVerb() {
 		return verb;
 	}
@@ -48,6 +64,8 @@ public class ServiceMethod {
 	}
 
 	private String name;
+	private String title;
+	private String description;
 	private HttpVerb verb;
 	private String relativePath;
 	private List<String> queryParameters;

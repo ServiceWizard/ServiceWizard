@@ -36,6 +36,9 @@ public class AngularServiceGenerator {
 		for (ServiceMethod method : service.getMethods()) {
 			output.println();
 
+			// Documentation block
+			addDocumentationBlock(method, output);
+
 			// Method parameters
 			boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
 			boolean hasRequestBody = method.hasRequestBody();
@@ -73,6 +76,29 @@ public class AngularServiceGenerator {
 		output.println(String.format("%s}", whitespace));
 		unindent();
 		output.println(String.format("%s}]);", whitespace));
+	}
+
+	public void addDocumentationBlock(ServiceMethod method, PrintStream output) {
+		output.println(String.format("%s/**", whitespace));
+
+		// Title
+		if (method.getTitle() != null)
+			output.println(String.format("%s * %s", whitespace, method.getTitle()));
+
+		output.println(String.format("%s *", whitespace));
+
+		// Description
+		if (method.getDescription() != null)
+			output.println(String.format("%s * %s", whitespace, method.getDescription()));
+
+		// Parameters
+		if (!method.getQueryParameters().isEmpty()) {
+			output.println(String.format("%s * Params:", whitespace));
+			for (String parameter : method.getQueryParameters())
+				output.println(String.format("%s *   %s", whitespace, parameter));
+		}
+
+		output.println(String.format("%s*/", whitespace));
 	}
 
 	private void indent() {

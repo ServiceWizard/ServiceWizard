@@ -33,6 +33,13 @@ angular.module('ToDoApp')
 .factory('TodoService', ['$http', function($http) {
     var urlBase = 'http://localhost:8080';
     return {
+		/**
+         * Get todo item
+         *
+         * Gets an existing todo item by id.
+         * Params:
+         *   id
+        */
         get: function(params) {
             var request = {
                 url: urlBase + '/todoItem/get',
@@ -42,10 +49,16 @@ angular.module('ToDoApp')
             return $http(request);
         },
 
-        create: function() {
+        /**
+         * Create todo
+         *
+         * Creates a todo item.
+        */
+        create: function(data) {
             var request = {
                 url: urlBase + '/todoItem/create',
                 method: 'POST',
+                data: data,
             };
             return $http(request);
         },
@@ -54,9 +67,12 @@ angular.module('ToDoApp')
 ```
 	
 It can also create documentation for this API in Markdown:
-## TodoService
-### [GET]    /todoItem/get(id)
-### [DELETE] /todoItem/delete(id)
-### [POST]   /todoItem/create
-### [GET]    /todoItem/all
+# TodoService
+## [GET]    /todoItem/get(id)
+Get todo item
 
+Gets an existing todo item by id.
+## [POST]   /todoItem/create
+Create todo
+
+Creates a todo item.
