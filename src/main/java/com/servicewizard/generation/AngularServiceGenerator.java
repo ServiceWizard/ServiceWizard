@@ -1,6 +1,8 @@
 
 package com.servicewizard.generation;
 
+import com.servicewizard.generation.formatting.Indentation;
+import com.servicewizard.generation.formatting.PrettyPrintStream;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 
@@ -21,98 +23,86 @@ public class AngularServiceGenerator {
 		}
 	}
 
-	private void generate(String moduleName, String urlBase, Service service, PrintStream output) {
-		indentation = 0;
-		whitespace = "";
+	private void generate(String moduleName, String urlBase, Service service, PrintStream outputStream) {
+		try {
+			PrettyPrintStream output = new PrettyPrintStream(outputStream);
 
-		output.println(String.format("%sangular.module('%s')", whitespace, moduleName));
-		output.println(String.format("%s.factory('%s', ['$http', function($http) {", whitespace, service.getName()));
+			output.println(String.format("angular.module('%s')", moduleName));
+			output.println(String.format(".factory('%s', ['$http', function($http) {", service.getName()));
 
-		indent();
-		output.println(String.format("%svar urlBase = '%s';", whitespace, urlBase));
-		output.println(String.format("%sreturn {", whitespace));
+			try (Indentation bodyIndent = output.indentBlock()) {
+				output.println(String.format("var urlBase = '%s';", urlBase));
+				output.println("return {");
 
-		indent();
-		for (ServiceMethod method : service.getMethods()) {
-			output.println();
+				try (Indentation returnIndent = output.indentBlock()) {
+					for (ServiceMethod method : service.getMethods()) {
+						output.println();
 
-			// Documentation block
-			addDocumentationBlock(method, output);
+						// Documentation block
+						addDocumentationBlock(method, output);
 
-			// Method parameters
-			boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
-			boolean hasRequestBody = method.hasRequestBody();
-			if (hasRequestBody && hasQueryParameters)
-				output.println(String.format("%s%s: function(data, params) {", whitespace, method.getName()));
-			else if (hasRequestBody)
-				output.println(String.format("%s%s: function(data) {", whitespace, method.getName()));
-			else if (hasQueryParameters)
-				output.println(String.format("%s%s: function(params) {", whitespace, method.getName()));
-			else
-				output.println(String.format("%s%s: function() {", whitespace, method.getName()));
+						// Method parameters
+						boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
+						boolean hasRequestBody = method.hasRequestBody();
 
-			// Request object
-			indent();
-			output.println(String.format("%svar request = {", whitespace));
+						// Function body
+						if (hasRequestBody && hasQueryParameters)
+							output.println(String.format("%s: function(data, params) {", method.getName()));
+						else if (hasRequestBody)
+							output.println(String.format("%s: function(data) {", method.getName()));
+						else if (hasQueryParameters)
+							output.println(String.format("%s: function(params) {", method.getName()));
+						else
+							output.println(String.format("%s: function() {", method.getName()));
+						try (Indentation functionIndent = output.indentBlock()) {
+							// Request object
+							output.println("var request = {");
+							try (Indentation requestIndent = output.indentBlock()) {
+								output.printListItem(String.format("url: urlBase + '%s'", method.getRelativePath()));
+								output.printListItem(String.format("method: '%s'", method.getVerb()));
 
-			indent();
-			output.println(String.format("%surl: urlBase + '%s',", whitespace, method.getRelativePath()));
-			output.println(String.format("%smethod: '%s',", whitespace, method.getVerb()));
+								if (hasRequestBody)
+									output.printListItem("data: data");
 
-			if (hasRequestBody)
-				output.println(String.format("%sdata: data,", whitespace));
-
-			if (hasQueryParameters)
-				output.println(String.format("%sparams: params,", whitespace));
-
-			unindent();
-			output.println(String.format("%s};", whitespace));
-			output.println(String.format("%sreturn $http(request);", whitespace));
-
-			unindent();
-			output.println(String.format("%s},", whitespace));
+								if (hasQueryParameters)
+									output.printListItem("params: params");
+								output.endList();
+							}
+							output.println("};");
+							output.println("return $http(request);");
+						}
+						output.printListItem("}");
+					}
+				}
+				output.endList();
+				output.println("};");
+			}
+			output.println("}]);");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		unindent();
-		output.println(String.format("%s}", whitespace));
-		unindent();
-		output.println(String.format("%s}]);", whitespace));
 	}
 
-	public void addDocumentationBlock(ServiceMethod method, PrintStream output) {
-		output.println(String.format("%s/**", whitespace));
+	public void addDocumentationBlock(ServiceMethod method, PrettyPrintStream output) {
+		output.println("/**");
 
 		// Title
 		if (method.getTitle() != null)
-			output.println(String.format("%s * %s", whitespace, method.getTitle()));
+			output.println(String.format(" * %s", method.getTitle()));
 
-		output.println(String.format("%s *", whitespace));
+		output.println(" *");
 
 		// Description
 		if (method.getDescription() != null)
-			output.println(String.format("%s * %s", whitespace, method.getDescription()));
+			output.println(String.format(" * %s", method.getDescription()));
 
 		// Parameters
 		if (!method.getQueryParameters().isEmpty()) {
-			output.println(String.format("%s * Params:", whitespace));
+			output.println(" * Params:");
 			for (String parameter : method.getQueryParameters())
-				output.println(String.format("%s *   %s", whitespace, parameter));
+				output.println(String.format(" *   %s", parameter));
 		}
 
-		output.println(String.format("%s*/", whitespace));
+		output.println("*/");
 	}
-
-	private void indent() {
-		++indentation;
-		whitespace += "    ";
-	}
-
-	private void unindent() {
-		--indentation;
-		whitespace = "";
-		for (int i = 0; i<indentation; ++i)
-			whitespace += "    ";
-	}
-
-	private int indentation;
-	private String whitespace;
 }

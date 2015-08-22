@@ -52,7 +52,7 @@ angular.module('ToDoApp')
             var request = {
                 url: urlBase + '/todoItem/create',
                 method: 'POST',
-                data: data,
+                data: data
             };
             return $http(request);
         },
@@ -68,10 +68,10 @@ angular.module('ToDoApp')
             var request = {
                 url: urlBase + '/todoItem/get',
                 method: 'GET',
-                params: params,
+                params: params
             };
             return $http(request);
-        },
+        }
     };
 }]);
 ```
