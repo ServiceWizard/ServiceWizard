@@ -9,9 +9,9 @@ import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,6 +19,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+/**
+ * Scans source classes for @ServiceWizardService annotations and represents them as Service objects
+ * for code generation to act upon.
+ *
+ * When a class is found with the @ServiceWizardService annotation, all its methods are analyzed as
+ * potential web service endpoints. If a method has any web service annotations present (@GET,
+ * @POST, etc) a ServiceMethod corresponding to that method will be created.
+ *
+ * A class doesn't need @ServiceWizardMethod present on its methods, but this annotation helps
+ * generate more readable code with better documentation. It is recommended to annotate each web
+ * service method with @ServiceWizardMethod.
+ */
 public class ServiceLocator {
 
 	public List<Service> locate() {
@@ -26,18 +38,25 @@ public class ServiceLocator {
 		Reflections reflections = new Reflections(packageName);
 		Set<Class<?>> serviceClasses = reflections.getTypesAnnotatedWith(ServiceWizardService.class);
 
-		List<Service> services = new LinkedList<>();
-		for (Class<?> serviceClass : serviceClasses)
-			services.add(processService(serviceClass));
-
-		return services;
+		// Build each class into a Service object
+		return serviceClasses.stream()
+			.map(this::buildService)
+			.collect(Collectors.toList());
 	}
 
+	/**
+	 * Creates a ServiceLocation that will scan the given package for annotated classes
+	 *
+	 * @param packageName the java package to scan
+	 */
 	public ServiceLocator(String packageName) {
 		this.packageName = packageName;
 	}
 
-	private Service processService(Class<?> serviceClass) {
+	/**
+	 * Creates a Service object based on the annotations present on the given class
+	 */
+	private Service buildService(Class<?> serviceClass) {
 		String serviceName = serviceClass.getAnnotation(ServiceWizardService.class).name();
 		Service service = new Service(serviceName);
 
@@ -48,7 +67,7 @@ public class ServiceLocator {
 
 		// Look for methods annotated with HTTP verbs
 		for (Method classMethod : serviceClass.getMethods()) {
-			ServiceMethod serviceMethod = processMethod(resourcePath, classMethod);
+			ServiceMethod serviceMethod = buildMethod(resourcePath, classMethod);
 
 			if (serviceMethod.getVerb() != null)
 				service.addMethod(serviceMethod);
@@ -57,7 +76,13 @@ public class ServiceLocator {
 		return service;
 	}
 
-	private ServiceMethod processMethod(String resourcePath, Method classMethod) {
+	/**
+	 * Creates a ServiceMethod based on the annotations present on the given method
+	 *
+	 * @param resourcePath the path that this method's path should be relative to
+	 * @param classMethod the reflected Java method to scan for annotations
+	 */
+	private ServiceMethod buildMethod(String resourcePath, Method classMethod) {
 		ServiceMethod serviceMethod = new ServiceMethod(classMethod.getName());
 
 		// Pull documentation from annotation
@@ -99,7 +124,7 @@ public class ServiceLocator {
 			if (!paramIsQueryParam)
 				hasRequestBody = true;
 		}
-		serviceMethod.hasRequestBody(hasRequestBody);
+		serviceMethod.setHasRequestBody(hasRequestBody);
 
 		return serviceMethod;
 	}
