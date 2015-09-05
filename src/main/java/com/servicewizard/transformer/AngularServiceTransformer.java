@@ -1,86 +1,81 @@
 
 package com.servicewizard.transformer;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 import com.servicewizard.transformer.formatting.Indentation;
 import com.servicewizard.transformer.formatting.PrettyPrintStream;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+public class AngularServiceTransformer implements Transformer {
 
-public class AngularServiceTransformer {
-
-	public void transform(String moduleName, String urlBase, Service service) {
-		transform(moduleName, urlBase, service, System.out);
-	}
-
-	public void transform(String moduleName, String urlBase, Service service, String fileName) {
-		try {
-			transform(moduleName, urlBase, service, new PrintStream(fileName));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	@Override
+	public void transform(String moduleName, String urlBase, List<Service> services, File outputRoot) throws IOException {
+		for (Service service : services) {
+			
+			transform(moduleName, urlBase, service,
+					new PrintStream(new File(outputRoot, service.getName() + ".js")));
 		}
 	}
 
-	private void transform(String moduleName, String urlBase, Service service, PrintStream outputStream) {
-		try {
-			PrettyPrintStream output = new PrettyPrintStream(outputStream);
+	private void transform(String moduleName, String urlBase, Service service, PrintStream outputStream) throws IOException {
+		PrettyPrintStream output = new PrettyPrintStream(outputStream);
 
-			output.println(String.format("angular.module('%s')", moduleName));
-			output.println(String.format(".factory('%s', ['$http', function($http) {", service.getName()));
+		output.println(String.format("angular.module('%s')", moduleName));
+		output.println(String.format(".factory('%s', ['$http', function($http) {", service.getName()));
 
-			try (Indentation bodyIndent = output.indentBlock()) {
-				output.println(String.format("var urlBase = '%s';", urlBase));
-				output.println("return {");
+		try (Indentation bodyIndent = output.indentBlock()) {
+			output.println(String.format("var urlBase = '%s';", urlBase));
+			output.println("return {");
 
-				try (Indentation returnIndent = output.indentBlock()) {
-					for (ServiceMethod method : service.getMethods()) {
-						output.println();
+			try (Indentation returnIndent = output.indentBlock()) {
+				for (ServiceMethod method : service.getMethods()) {
+					output.println();
 
-						// Documentation block
-						addDocumentationBlock(method, output);
+					// Documentation block
+					addDocumentationBlock(method, output);
 
-						// Method parameters
-						boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
-						boolean hasRequestBody = method.hasRequestBody();
+					// Method parameters
+					boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
+					boolean hasRequestBody = method.hasRequestBody();
 
-						// Function body
-						if (hasRequestBody && hasQueryParameters)
-							output.println(String.format("%s: function(data, params) {", method.getName()));
-						else if (hasRequestBody)
-							output.println(String.format("%s: function(data) {", method.getName()));
-						else if (hasQueryParameters)
-							output.println(String.format("%s: function(params) {", method.getName()));
-						else
-							output.println(String.format("%s: function() {", method.getName()));
-						try (Indentation functionIndent = output.indentBlock()) {
-							// Request object
-							output.println("var request = {");
-							try (Indentation requestIndent = output.indentBlock()) {
-								output.printListItem(String.format("url: urlBase + '%s'", method.getRelativePath()));
-								output.printListItem(String.format("method: '%s'", method.getVerb()));
+					// Function body
+					if (hasRequestBody && hasQueryParameters)
+						output.println(String.format("%s: function(data, params) {", method.getName()));
+					else if (hasRequestBody)
+						output.println(String.format("%s: function(data) {", method.getName()));
+					else if (hasQueryParameters)
+						output.println(String.format("%s: function(params) {", method.getName()));
+					else
+						output.println(String.format("%s: function() {", method.getName()));
+					try (Indentation functionIndent = output.indentBlock()) {
+						// Request object
+						output.println("var request = {");
+						try (Indentation requestIndent = output.indentBlock()) {
+							output.printListItem(String.format("url: urlBase + '%s'", method.getRelativePath()));
+							output.printListItem(String.format("method: '%s'", method.getVerb()));
 
-								if (hasRequestBody)
-									output.printListItem("data: data");
+							if (hasRequestBody)
+								output.printListItem("data: data");
 
-								if (hasQueryParameters)
-									output.printListItem("params: params");
-								output.endList();
-							}
-							output.println("};");
-							output.println("return $http(request);");
+							if (hasQueryParameters)
+								output.printListItem("params: params");
+							output.endList();
 						}
-						output.printListItem("}");
+						output.println("};");
+						output.println("return $http(request);");
 					}
+					output.printListItem("}");
 				}
-				output.endList();
-				output.println("};");
 			}
-			output.println("}]);");
-		} catch (Exception e) {
-			e.printStackTrace();
+			output.endList();
+			output.println("};");
 		}
+		output.println("}]);");
 	}
 
 	public void addDocumentationBlock(ServiceMethod method, PrettyPrintStream output) {
@@ -105,4 +100,5 @@ public class AngularServiceTransformer {
 
 		output.println("*/");
 	}
+
 }

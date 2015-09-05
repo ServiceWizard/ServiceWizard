@@ -1,31 +1,21 @@
 
 package com.servicewizard.transformer;
 
-import com.servicewizard.model.Service;
-import com.servicewizard.model.ServiceMethod;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MarkdownTransformer {
+import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceMethod;
 
-	public void transform(List<Service> services) {
-		try {
-			transform(services, System.out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+public class MarkdownTransformer implements Transformer {
 
-	public void transform(List<Service> services, String fileName) {
-		try {
-			PrintStream fileWriter = new PrintStream(fileName);
-			transform(services, fileWriter);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void transform(String moduleName, String urlBase, List<Service> services, File outputRoot) throws IOException {
+		transform(services, new PrintStream(
+				new File(outputRoot, "api-documentation.md")));
 	}
 
 	private void transform(List<Service> services, PrintStream output) throws IOException {
