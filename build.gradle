@@ -53,7 +53,8 @@ configurations {
 }
 
 dependencies {
-    compile 'io.dropwizard:dropwizard-core:0.7.1', 'org.reflections:reflections:0.9.9'
+    compile 'io.dropwizard:dropwizard-core:0.8.4'
+    compile 'org.reflections:reflections:0.9.9'
     sampleCompile sourceSets.main.output
     testCompile 'junit:junit:4.11'
 }
