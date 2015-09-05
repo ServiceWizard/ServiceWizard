@@ -1,29 +1,29 @@
 
-package com.servicewizard.generator;
+package com.servicewizard.transformer;
 
-import com.servicewizard.generator.formatting.Indentation;
-import com.servicewizard.generator.formatting.PrettyPrintStream;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
+import com.servicewizard.transformer.formatting.Indentation;
+import com.servicewizard.transformer.formatting.PrettyPrintStream;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-public class AngularServiceGenerator {
+public class AngularServiceTransformer {
 
-	public void generate(String moduleName, String urlBase, Service service) {
-		generate(moduleName, urlBase, service, System.out);
+	public void transform(String moduleName, String urlBase, Service service) {
+		transform(moduleName, urlBase, service, System.out);
 	}
 
-	public void generate(String moduleName, String urlBase, Service service, String fileName) {
+	public void transform(String moduleName, String urlBase, Service service, String fileName) {
 		try {
-			generate(moduleName, urlBase, service, new PrintStream(fileName));
+			transform(moduleName, urlBase, service, new PrintStream(fileName));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void generate(String moduleName, String urlBase, Service service, PrintStream outputStream) {
+	private void transform(String moduleName, String urlBase, Service service, PrintStream outputStream) {
 		try {
 			PrettyPrintStream output = new PrettyPrintStream(outputStream);
 

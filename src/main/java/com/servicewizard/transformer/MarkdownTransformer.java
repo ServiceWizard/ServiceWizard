@@ -1,5 +1,5 @@
 
-package com.servicewizard.generator;
+package com.servicewizard.transformer;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
@@ -9,26 +9,26 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MarkdownGenerator {
+public class MarkdownTransformer {
 
-	public void generate(List<Service> services) {
+	public void transform(List<Service> services) {
 		try {
-			generate(services, System.out);
+			transform(services, System.out);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void generate(List<Service> services, String fileName) {
+	public void transform(List<Service> services, String fileName) {
 		try {
 			PrintStream fileWriter = new PrintStream(fileName);
-			generate(services, fileWriter);
+			transform(services, fileWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void generate(List<Service> services, PrintStream output) throws IOException {
+	private void transform(List<Service> services, PrintStream output) throws IOException {
 		for (Service service : services) {
 			output.println("# " + service.getName());
 

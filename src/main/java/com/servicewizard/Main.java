@@ -1,10 +1,10 @@
 
 package com.servicewizard;
 
-import com.servicewizard.generator.AngularServiceGenerator;
-import com.servicewizard.generator.MarkdownGenerator;
 import com.servicewizard.locator.JerseyResourceLocator;
 import com.servicewizard.model.Service;
+import com.servicewizard.transformer.AngularServiceTransformer;
+import com.servicewizard.transformer.MarkdownTransformer;
 
 import java.util.List;
 
@@ -18,11 +18,11 @@ public class Main {
 
 		List<Service> services = new JerseyResourceLocator(scanPackage).locate();
 
-		new MarkdownGenerator().generate(services, outputPath + "/api-documentation.md");
+		new MarkdownTransformer().transform(services, outputPath + "/api-documentation.md");
 
 		for (Service service : services) {
 			String serviceOutput = outputPath + "/" + service.getName() + ".js";
-			new AngularServiceGenerator().generate(moduleName, urlBase, service, serviceOutput);
+			new AngularServiceTransformer().transform(moduleName, urlBase, service, serviceOutput);
 		}
 	}
 }
