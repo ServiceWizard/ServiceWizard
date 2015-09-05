@@ -1,5 +1,5 @@
 
-package com.servicewizard.generation;
+package com.servicewizard.generator;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;

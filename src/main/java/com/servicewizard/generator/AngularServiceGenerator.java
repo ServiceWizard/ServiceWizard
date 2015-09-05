@@ -1,8 +1,8 @@
 
-package com.servicewizard.generation;
+package com.servicewizard.generator;
 
-import com.servicewizard.generation.formatting.Indentation;
-import com.servicewizard.generation.formatting.PrettyPrintStream;
+import com.servicewizard.generator.formatting.Indentation;
+import com.servicewizard.generator.formatting.PrettyPrintStream;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 

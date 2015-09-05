@@ -1,5 +1,5 @@
 
-package com.servicewizard.generation.formatting;
+package com.servicewizard.generator.formatting;
 
 public class Indentation implements AutoCloseable {
 

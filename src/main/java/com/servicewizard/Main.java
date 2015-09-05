@@ -1,8 +1,9 @@
 
 package com.servicewizard;
 
-import com.servicewizard.generation.AngularServiceGenerator;
-import com.servicewizard.generation.MarkdownGenerator;
+import com.servicewizard.generator.AngularServiceGenerator;
+import com.servicewizard.generator.MarkdownGenerator;
+import com.servicewizard.locator.JerseyResourceLocator;
 import com.servicewizard.model.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class Main {
 		String moduleName = args[2];
 		String urlBase = args[3];
 
-		List<Service> services = new ServiceLocator(scanPackage).locate();
+		List<Service> services = new JerseyResourceLocator(scanPackage).locate();
 
 		new MarkdownGenerator().generate(services, outputPath + "/api-documentation.md");
 
