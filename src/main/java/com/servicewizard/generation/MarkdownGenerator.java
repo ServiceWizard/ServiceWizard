@@ -28,7 +28,7 @@ public class MarkdownGenerator {
 		}
 	}
 
-	private void generate(List<Service> services, PrintStream output) throws IOException {
+	public void generate(List<Service> services, PrintStream output) throws IOException {
 		for (Service service : services) {
 			output.println("# " + service.getName());
 

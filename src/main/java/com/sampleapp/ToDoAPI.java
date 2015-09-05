@@ -1,5 +1,6 @@
 package com.sampleapp;
 
+import com.sampleapp.resource.ToDoDocsResources;
 import com.sampleapp.resource.ToDoItemService;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -26,6 +27,7 @@ public class ToDoAPI extends Application<Configuration> {
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
         environment.jersey().register(new ToDoItemService());
+        environment.jersey().register(new ToDoDocsResources());
 
         // CORS support
         FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
