@@ -1,5 +1,5 @@
 
-package com.servicewizard.generation.formatting;
+package com.servicewizard.transformer.formatting;
 
 import java.io.PrintStream;
 

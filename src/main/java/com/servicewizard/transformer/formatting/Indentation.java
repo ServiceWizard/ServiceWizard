@@ -1,9 +1,9 @@
 
-package com.servicewizard.generation.formatting;
+package com.servicewizard.transformer.formatting;
 
 public class Indentation implements AutoCloseable {
 
-	public void close() throws Exception {
+	public void close() {
 		indentingStream.unindent();
 	}
 
