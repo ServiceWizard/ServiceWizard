@@ -1,5 +1,6 @@
 .gradle
 
+# intellij
 .ideaServiceWizard.iml
 ServiceWizard.ipr
 ServiceWizard.iws
@@ -7,3 +8,12 @@ ServiceWizard.iws
 ServiceWizard.iml
 build
 output
+/bin/
+
+# eclipse
+.classpath
+.project
+.settings
+
+# OS X
+.DS_Store
