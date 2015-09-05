@@ -2,6 +2,7 @@
 package com.servicewizard;
 
 import com.servicewizard.generation.AngularServiceGenerator;
+import com.servicewizard.generation.HtmlDocGenerator;
 import com.servicewizard.generation.MarkdownGenerator;
 import com.servicewizard.model.Service;
 
@@ -18,6 +19,7 @@ public class Main {
 		List<Service> services = new ServiceLocator(scanPackage).locate();
 
 		new MarkdownGenerator().generate(services, outputPath + "/api-documentation.md");
+		new HtmlDocGenerator().generate(services, outputPath + "/api-documentation.html");
 
 		for (Service service : services) {
 			String serviceOutput = outputPath + "/" + service.getName() + ".js";

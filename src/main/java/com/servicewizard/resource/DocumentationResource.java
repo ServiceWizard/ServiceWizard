@@ -1,7 +1,7 @@
 package com.servicewizard.resource;
 
 import com.servicewizard.ServiceLocator;
-import com.servicewizard.generation.MarkdownGenerator;
+import com.servicewizard.generation.HtmlDocGenerator;
 import com.servicewizard.model.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -24,7 +24,7 @@ public abstract class DocumentationResource {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteStream);
 
-        MarkdownGenerator generator = new MarkdownGenerator();
+        HtmlDocGenerator generator = new HtmlDocGenerator();
         try {
             generator.generate(services, printStream);
         } catch (IOException e) {
