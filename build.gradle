@@ -24,14 +24,42 @@ buildscript {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    sample {
+        java {
+            srcDir 'src/sample/java'
+        }
+        resources {
+            srcDir 'src/sample/resources'
+        }
+    }
+}
+
+sampleClasses.dependsOn 'classes'
+
+configurations {
+    sampleCompile { extendsFrom compile }
+    sampleRuntime { extendsFrom sampleCompile, runtime }
+}
+
 dependencies {
     compile 'io.dropwizard:dropwizard-core:0.7.1', 'org.reflections:reflections:0.9.9'
+    sampleCompile sourceSets.main.output
     testCompile 'junit:junit:4.11'
 }
 
 mainClassName = 'com.servicewizard.Main'
 
 run {
+    classpath sourceSets.sample.runtimeClasspath
     args 'com.sampleapp.resource', 'output', 'ToDoApp', 'http://localhost:8080'
 }
 
@@ -43,6 +71,6 @@ fatJar {
 
 task sample (type:JavaExec) {
 	main 'com.sampleapp.ToDoAPI'
-	classpath sourceSets.main.runtimeClasspath
+	classpath sourceSets.sample.runtimeClasspath
 	args 'server', 'config.yml'
 }
