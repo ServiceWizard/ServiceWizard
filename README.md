@@ -86,3 +86,9 @@ Creates a todo item.
 Get todo item
 
 Gets an existing todo item by id.
+
+# Building from source
+
+```
+$ gradle shadow
+```
