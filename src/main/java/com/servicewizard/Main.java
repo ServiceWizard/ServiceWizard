@@ -19,6 +19,10 @@ public class Main {
 		String moduleName = args[2];
 		String urlBase = args[3];
 
+		if (!outputRoot.exists()) {
+			outputRoot.mkdirs();
+		}
+
 		List<Service> services = new JerseyResourceLocator(scanPackage).locate();
 		
 		for (Transformer transformer : new Transformer[] {
