@@ -14,12 +14,13 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'com.servicewizard'
-version = '1.0.0a'
+version = '0.1.0'
 
 repositories {
     mavenCentral()
@@ -64,6 +65,12 @@ run {
     args 'com.sampleapp.resource', 'output', 'ToDoApp', 'http://localhost:8080'
 }
 
+task sample (type:JavaExec) {
+    main 'com.sampleapp.ToDoAPI'
+    classpath sourceSets.sample.runtimeClasspath
+    args 'server', 'config.yml'
+}
+
 jar {
     from sourceSets.main.output
     
@@ -72,8 +79,20 @@ jar {
     }
 }
 
-task sample (type:JavaExec) {
-	main 'com.sampleapp.ToDoAPI'
-	classpath sourceSets.sample.runtimeClasspath
-	args 'server', 'config.yml'
+task sourceJar (type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task buildDist(dependsOn: [jar, sourceJar, javadocJar]) << {
+    pom {
+        project {
+            artifactId = project.name
+        }
+    }.writeTo("$buildDir/libs/${project.name}-${project.version}.pom")
 }

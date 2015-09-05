@@ -1,12 +1,6 @@
 
 package com.servicewizard;
 
-import com.servicewizard.model.HttpVerb;
-import com.servicewizard.model.Service;
-import com.servicewizard.model.ServiceMethod;
-
-import org.reflections.Reflections;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,17 +13,24 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import org.reflections.Reflections;
+
+import com.servicewizard.model.HttpVerb;
+import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceMethod;
+
 /**
- * Scans source classes for @ServiceWizardService annotations and represents them as Service objects
- * for code generation to act upon.
+ * Scans source classes for <code>ServiceWizardService</code> annotations and represents them as
+ * Service objects for code generation to act upon.
  *
- * When a class is found with the @ServiceWizardService annotation, all its methods are analyzed as
- * potential web service endpoints. If a method has any web service annotations present (@GET,
- * @POST, etc) a ServiceMethod corresponding to that method will be created.
+ * When a class is found with the <code>ServiceWizardService</code> annotation, all its methods are
+ * analyzed as potential web service endpoints. If a method has any <code>javax.ws.rs</code> web
+ * service annotations present (<code>GET</code>, <code>POST</code>, etc) a ServiceMethod
+ * corresponding to that method will be created.
  *
- * A class doesn't need @ServiceWizardMethod present on its methods, but this annotation helps
- * generate more readable code with better documentation. It is recommended to annotate each web
- * service method with @ServiceWizardMethod.
+ * A class doesn't need <code>ServiceWizardMethod</code> present on its methods, but this annotation
+ * helps generate more readable code with better documentation. It is recommended to annotate each
+ * web service method with <code>ServiceWizardMethod</code>.
  */
 public class ServiceLocator {
 
