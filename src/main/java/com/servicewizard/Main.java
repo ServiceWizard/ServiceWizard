@@ -1,6 +1,7 @@
 
 package com.servicewizard;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +23,6 @@ public class Main {
 		if (!outputRoot.exists()) {
 			outputRoot.mkdirs();
 		}
-
 		List<Service> services = new JerseyResourceLocator(scanPackage).locate();
 		
 		for (Transformer transformer : new Transformer[] {

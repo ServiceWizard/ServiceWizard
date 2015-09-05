@@ -1,6 +1,7 @@
 package com.sampleapp;
 
 import com.sampleapp.resource.AuthResource;
+import com.sampleapp.resource.DocsResource;
 import com.sampleapp.resource.ToDoItemResource;
 import com.sampleapp.resource.UserResource;
 
@@ -23,5 +24,6 @@ public class ToDoAPI extends Application<Configuration> {
         environment.jersey().register(new ToDoItemResource());
         environment.jersey().register(new AuthResource());
 		environment.jersey().register(new UserResource());
+		environment.jersey().register(new DocsResource());
     }
 }
