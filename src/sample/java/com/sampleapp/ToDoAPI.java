@@ -1,6 +1,8 @@
 package com.sampleapp;
 
-import com.sampleapp.resource.ToDoItemService;
+import com.sampleapp.resource.AuthResource;
+import com.sampleapp.resource.ToDoItemResource;
+import com.sampleapp.resource.UserResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -18,6 +20,8 @@ public class ToDoAPI extends Application<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
-        environment.jersey().register(new ToDoItemService());
+        environment.jersey().register(new ToDoItemResource());
+        environment.jersey().register(new AuthResource());
+		environment.jersey().register(new UserResource());
     }
 }

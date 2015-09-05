@@ -1,11 +1,11 @@
 
 package com.servicewizard;
 
+import java.util.List;
+
 import com.servicewizard.generation.AngularServiceGenerator;
 import com.servicewizard.generation.MarkdownGenerator;
 import com.servicewizard.model.Service;
-
-import java.util.List;
 
 public class Main {
 

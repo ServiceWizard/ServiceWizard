@@ -22,10 +22,10 @@ public @interface ServiceWizardMethod {
 	 *
 	 * This title appears in documentation and may contain spaces.
 	 */
-	public String title();
+	public String title() default "";
 
 	/**
 	 * A description of the service method, its behavior and intended use
 	 */
-	public String description();
+	public String description() default "";
 }
