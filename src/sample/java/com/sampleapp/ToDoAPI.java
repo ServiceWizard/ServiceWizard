@@ -1,6 +1,7 @@
 package com.sampleapp;
 
 import com.sampleapp.resource.AuthResource;
+import com.sampleapp.resource.CustomDocsResource;
 import com.sampleapp.resource.ToDoItemResource;
 import com.sampleapp.resource.UserResource;
 import com.servicewizard.resource.DefaultHTMLDocumentationResource;
@@ -30,5 +31,6 @@ public class ToDoAPI extends Application<Configuration> {
         environment.jersey().register(new AuthResource());
 		environment.jersey().register(new UserResource());
 		environment.jersey().register(new DefaultHTMLDocumentationResource(getName(), "com.sampleapp"));
+		environment.jersey().register(new CustomDocsResource(getName(), "com.sampleapp"));
     }
 }
