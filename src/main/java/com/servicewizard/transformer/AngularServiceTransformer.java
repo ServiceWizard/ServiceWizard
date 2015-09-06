@@ -4,18 +4,18 @@ package com.servicewizard.transformer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
+import com.servicewizard.model.ServiceModel;
 import com.servicewizard.transformer.formatting.Indentation;
 import com.servicewizard.transformer.formatting.PrettyPrintStream;
 
 public class AngularServiceTransformer implements Transformer {
 
 	@Override
-	public void transform(String moduleName, String urlBase, List<Service> services, File outputRoot) throws IOException {
-		for (Service service : services) {
+	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException {
+		for (Service service : serviceModel.getServices()) {
 			
 			transform(moduleName, urlBase, service,
 					new PrintStream(new File(outputRoot, service.getName() + ".js")));
