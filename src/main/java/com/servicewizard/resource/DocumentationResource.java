@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import com.servicewizard.generation.HtmlDocGenerator;
 import com.servicewizard.locator.JerseyResourceLocator;
 import com.servicewizard.model.Service;
+import com.servicewizard.transformer.HtmlDocTransformer;
 
 public abstract class DocumentationResource {
 
@@ -24,9 +24,9 @@ public abstract class DocumentationResource {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteStream);
 
-        HtmlDocGenerator generator = new HtmlDocGenerator();
+        HtmlDocTransformer generator = new HtmlDocTransformer();
         try {
-            generator.generate(services, printStream);
+            generator.transform(services, printStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

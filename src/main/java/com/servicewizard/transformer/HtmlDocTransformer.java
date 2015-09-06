@@ -1,25 +1,26 @@
-package com.servicewizard.generation;
+package com.servicewizard.transformer;
 
-import com.servicewizard.model.Service;
-import com.servicewizard.model.ServiceMethod;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HtmlDocGenerator {
+import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceMethod;
 
-    public void generate(List<Service> services, String fileName) {
+public class HtmlDocTransformer implements Transformer {
+
+	@Override
+	public void transform(String moduleName, String baseUrl, List<Service> services, File outputRoot) throws IOException {
         try {
-            PrintStream fileWriter = new PrintStream(fileName);
-            generate(services, fileWriter);
+			transform(services, new PrintStream(new File(outputRoot, "index.html")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void generate(List<Service> services, PrintStream output) throws IOException {
+    public void transform(List<Service> services, PrintStream output) throws IOException {
         for (Service service : services) {
             output.println(String.format("<h1>%s<h1/>", service.getName()));
 
