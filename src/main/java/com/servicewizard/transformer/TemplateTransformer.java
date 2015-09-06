@@ -31,9 +31,27 @@ public class TemplateTransformer implements Transformer {
 				TemplateTransformer.class.getResourceAsStream(BUILTIN_MARKDOWN_TEMPLATE)), "api-documentation.md");
 	}
 
-	private final Template template;
+	@Override
+	public void transform(String moduleName, String baseUrl, ServiceModel serviceModel, File outputRoot) throws IOException {
+		if (targetFile == null) {
+			// this is a really miserable situation - we should find a better way to handle the whole file output scenario
+			throw new IllegalArgumentException("Attempting to transform to file output without having set a target filename.");
+		}
+		transform(serviceModel, new FileWriter(new File(outputRoot, targetFile)));
+	}
 
-	private String targetFile;
+	public void transform(ServiceModel serviceModel, Writer writer) throws IOException {
+		try {
+			template.process(serviceModel, writer);
+		} catch (TemplateException e) {
+			// wrap and throw - don't expose template interaction beyond this
+			throw new IOException(e);
+		}
+	}
+
+	public void setTargetFile(String targetFile) {
+		this.targetFile = targetFile;
+	}
 
 	public TemplateTransformer(String templateContents) {
 		this(new StringReader(templateContents), null);
@@ -55,25 +73,7 @@ public class TemplateTransformer implements Transformer {
 		}
 	}
 
-	public void setTargetFile(String targetFile) {
-		this.targetFile = targetFile;
-	}
+	private final Template template;
 
-	@Override
-	public void transform(String moduleName, String baseUrl, ServiceModel serviceModel, File outputRoot) throws IOException {
-		if (targetFile == null) {
-			// this is a really miserable situation - we should find a better way to handle the whole file output scenario
-			throw new IllegalArgumentException("Attempting to transform to file output without having set a target filename.");
-		}
-		transform(serviceModel, new FileWriter(new File(outputRoot, targetFile)));
-	}
-
-	public void transform(ServiceModel serviceModel, Writer writer) throws IOException {
-		try {
-			template.process(serviceModel, writer);
-		} catch (TemplateException e) {
-			// wrap and throw - don't expose template interaction beyond this
-			throw new IOException(e);
-		}
-	}
+	private String targetFile;
 }
