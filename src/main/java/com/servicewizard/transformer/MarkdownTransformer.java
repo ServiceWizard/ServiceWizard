@@ -1,34 +1,24 @@
 
-package com.servicewizard.generation;
+package com.servicewizard.transformer;
 
-import com.servicewizard.model.Service;
-import com.servicewizard.model.ServiceMethod;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MarkdownGenerator {
+import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceMethod;
 
-	public void generate(List<Service> services) {
-		try {
-			generate(services, System.out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+public class MarkdownTransformer implements Transformer {
+
+	@Override
+	public void transform(String moduleName, String urlBase, List<Service> services, File outputRoot) throws IOException {
+		transform(services, new PrintStream(
+				new File(outputRoot, "api-documentation.md")));
 	}
 
-	public void generate(List<Service> services, String fileName) {
-		try {
-			PrintStream fileWriter = new PrintStream(fileName);
-			generate(services, fileWriter);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void generate(List<Service> services, PrintStream output) throws IOException {
+	private void transform(List<Service> services, PrintStream output) throws IOException {
 		for (Service service : services) {
 			output.println("# " + service.getName());
 

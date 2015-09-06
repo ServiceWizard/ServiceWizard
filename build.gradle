@@ -1,48 +1,99 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'application'
-apply plugin: 'fatjar'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'com.servicewizard'
-version = '1.0.0a'
+version = '0.1.0'
 
 repositories {
     mavenCentral()
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
     }
-
-    dependencies {
-        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'
+    sample {
+        java {
+            srcDir 'src/sample/java'
+        }
+        resources {
+            srcDir 'src/sample/resources'
+        }
     }
 }
 
+sampleClasses.dependsOn 'classes'
+
+configurations {
+    sampleCompile { extendsFrom compile }
+    sampleRuntime { extendsFrom sampleCompile, runtime }
+}
+
 dependencies {
-    compile 'io.dropwizard:dropwizard-core:0.7.1', 'org.reflections:reflections:0.9.9'
+    compile 'io.dropwizard:dropwizard-core:0.8.4'
+    compile 'org.reflections:reflections:0.9.9'
+    sampleCompile sourceSets.main.output
     testCompile 'junit:junit:4.11'
 }
 
 mainClassName = 'com.servicewizard.Main'
 
 run {
+    classpath sourceSets.sample.runtimeClasspath
     args 'com.sampleapp.resource', 'output', 'ToDoApp', 'http://localhost:8080'
 }
 
-fatJar {
+task sample (type:JavaExec) {
+    main 'com.sampleapp.ToDoAPI'
+    classpath sourceSets.sample.runtimeClasspath
+    args 'server', 'config.yml'
+}
+
+jar {
+    from sourceSets.main.output
+    
     manifest {
         attributes 'Main-Class': mainClassName
     }
 }
 
-task sample (type:JavaExec) {
-	main 'com.sampleapp.ToDoAPI'
-	classpath sourceSets.main.runtimeClasspath
-	args 'server', 'config.yml'
+task sourceJar (type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task buildDist(dependsOn: [jar, sourceJar, javadocJar]) << {
+    pom {
+        project {
+            artifactId = project.name
+        }
+    }.writeTo("$buildDir/libs/${project.name}-${project.version}.pom")
 }

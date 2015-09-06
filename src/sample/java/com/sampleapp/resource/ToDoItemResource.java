@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ServiceWizardService(name="TodoService")
-public class ToDoItemService {
+public class ToDoItemResource {
 
 	@GET
 	@Path("/all")
@@ -66,7 +66,7 @@ public class ToDoItemService {
 			items.remove(item);
 	}
 
-	public ToDoItemService() {
+	public ToDoItemResource() {
 		items = new LinkedList<>();
 		items.add(new ToDoItem(1, "Take out the trash", new Date()));
 		items.add(new ToDoItem(2, "Brush my teeth", new Date()));
