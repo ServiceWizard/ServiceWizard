@@ -7,6 +7,7 @@ import com.servicewizard.model.HttpVerb;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 
+import io.dropwizard.jersey.PATCH;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -15,11 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 
 /**
  * Scans source classes for @ServiceWizardService annotations and represents them as Service objects
@@ -95,12 +92,16 @@ public class JerseyResourceLocator implements ServiceLocator {
         }
 
         // Look for verb annotations
+		if (classMethod.isAnnotationPresent(DELETE.class))
+			serviceMethod.setVerb(HttpVerb.DELETE);
         if (classMethod.isAnnotationPresent(GET.class))
             serviceMethod.setVerb(HttpVerb.GET);
+		if (classMethod.isAnnotationPresent(PATCH.class))
+			serviceMethod.setVerb(HttpVerb.PATCH);
         if (classMethod.isAnnotationPresent(POST.class))
             serviceMethod.setVerb(HttpVerb.POST);
-        if (classMethod.isAnnotationPresent(DELETE.class))
-            serviceMethod.setVerb(HttpVerb.DELETE);
+		if (classMethod.isAnnotationPresent(PUT.class))
+			serviceMethod.setVerb(HttpVerb.PUT);
 
         // Path
         if (classMethod.isAnnotationPresent(Path.class)) {
