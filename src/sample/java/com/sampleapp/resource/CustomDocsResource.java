@@ -11,8 +11,7 @@ import com.servicewizard.transformer.TemplateTransformer;
 
 @Path("/docs2")
 public class CustomDocsResource extends AbstractDocumentationResource {
-	private static final String VERY_BASIC_TEMPLATE = "Resources:\n" +
-			"<#list services as service>* ${service.name}\n</#list>";
+	private static final String VERY_BASIC_TEMPLATE = "Resources:\n<#list services as service>* ${service.name}\n</#list>";
 
 	public CustomDocsResource(String apiName, String packagePath) {
 		super(apiName, new TemplateTransformer(VERY_BASIC_TEMPLATE), new JerseyResourceLocator(packagePath));
