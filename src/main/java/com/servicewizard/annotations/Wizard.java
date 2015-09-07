@@ -44,9 +44,9 @@ public @interface Wizard {
 	 * 
 	 * If applied to a service class, this is used as the default for every route method contained
 	 * within.
-	 * 
-	 * T
 	 */
+	// This is a string because we need true/false + null behavior, and annotation default values
+	// can't be null.
 	public String requiresAuthentication() default "";
 	
 	/**
