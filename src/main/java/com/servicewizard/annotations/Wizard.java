@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.servicewizard.model.Requirement;
+
 /**
  * Marks a service class or method with information to be used in documentation and/or code
  * generation by ServiceWizard.
@@ -40,14 +42,12 @@ public @interface Wizard {
 	public String description() default "";
 
 	/**
-	 * Flag noting that authentication credentials are required for this route method.
+	 * Notes that authentication credentials are required for this route method.
 	 * 
 	 * If applied to a service class, this is used as the default for every route method contained
 	 * within.
 	 */
-	// This is a string because we need true/false + null behavior, and annotation default values
-	// can't be null.
-	public String requiresAuthentication() default "";
+	public Requirement requiresAuthentication() default Requirement.NOT_SPECIFIED;
 	
 	/**
 	 * Notes that a certain permission or role is required for this route method (for example,

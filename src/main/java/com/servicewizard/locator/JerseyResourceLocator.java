@@ -21,6 +21,7 @@ import org.reflections.Reflections;
 import com.servicewizard.annotations.Wizard;
 import com.servicewizard.annotations.WizardDesc;
 import com.servicewizard.annotations.WizardIgnore;
+import com.servicewizard.model.Requirement;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 import com.servicewizard.model.ServiceMethodParameter;
@@ -133,10 +134,11 @@ public class JerseyResourceLocator implements ServiceLocator {
 			path += classMethod.getAnnotation(Path.class).value();
 		serviceMethod.setPath(path);
 
-		if (methodMeta != null && !methodMeta.requiresAuthentication().isEmpty())
-			serviceMethod.setRequiresAuthentication(Boolean.valueOf(methodMeta.requiresAuthentication()));
-		else if (!serviceMeta.requiresAuthentication().isEmpty())
-			serviceMethod.setRequiresAuthentication(Boolean.valueOf(serviceMeta.requiresAuthentication()));
+		// treat an unspecified requirement as not required - better to be uninformed than misinformed
+		if (methodMeta != null && methodMeta.requiresAuthentication() != Requirement.NOT_SPECIFIED)
+			serviceMethod.setRequiresAuthentication(methodMeta.requiresAuthentication() == Requirement.REQUIRED);
+		else if (serviceMeta.requiresAuthentication() != Requirement.NOT_SPECIFIED)
+			serviceMethod.setRequiresAuthentication(serviceMeta.requiresAuthentication() == Requirement.REQUIRED);
 		
 		if (methodMeta != null && !methodMeta.permissionRequired().isEmpty())
 			serviceMethod.setPermissionRequired(methodMeta.permissionRequired());
