@@ -3,11 +3,12 @@ package com.servicewizard.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A service method (or endpoint) exposed by a web service.
  */
-public class ServiceMethod {
+public class ServiceMethod implements Comparable<ServiceMethod> {
 
 	/**
 	 * The name of the method as it will appear in generated code.
@@ -16,6 +17,10 @@ public class ServiceMethod {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -54,43 +59,72 @@ public class ServiceMethod {
 	/**
 	 * The verb describing the service method's HTTP request method
 	 */
-	public HttpVerb getVerb() {
+	public String getVerb() {
 		return verb;
-	}
-
-	/**
-	 * Sets the HTTP verb for this method
-	 */
-	public void setVerb(HttpVerb verb) {
-		this.verb = verb;
 	}
 
 	/**
 	 * The URL for this method, relative to the host it is served on
 	 */
-	public String getRelativePath() {
-		return relativePath;
+	public String getPath() {
+		return path;
 	}
 
 	/**
 	 * Sets the URL for this method, relative to the host it is served on
 	 */
-	public void setRelativePath(String relativePath) {
-		this.relativePath = relativePath;
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public boolean isRequiresAuthentication() {
+		return requiresAuthentication;
+	}
+
+	public void setRequiresAuthentication(boolean requiresAuthentication) {
+		this.requiresAuthentication = requiresAuthentication;
+	}
+
+	public String getPermissionRequired() {
+		return permissionRequired;
+	}
+
+	public void setPermissionRequired(String permissionRequired) {
+		this.permissionRequired = permissionRequired;
 	}
 
 	/**
 	 * The HTTP query parameters accepted by this method
 	 */
-	public List<String> getQueryParameters() {
+	public List<ServiceMethodParameter> getQueryParameters() {
 		return queryParameters;
 	}
 
 	/**
 	 * Add an HTTP parameter this service method will accept
 	 */
-	public void addQueryParameter(String param) {
+	public void addQueryParameter(ServiceMethodParameter param) {
 		queryParameters.add(param);
+	}
+
+	public List<String> getQueryParameterNames() {
+		return queryParameters.stream()
+				.map(p -> p.getName())
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * The path parameters required by this method
+	 */
+	public List<ServiceMethodParameter> getPathParameters() {
+		return pathParameters;
+	}
+
+	/**
+	 * Add a path parameter this service method requires.
+	 */
+	public void addPathParameter(ServiceMethodParameter param) {
+		pathParameters.add(param);
 	}
 
 	/**
@@ -98,7 +132,8 @@ public class ServiceMethod {
 	 *
 	 * POST methods will typically have a request body, while GET methods typically will not.
 	 */
-	public boolean hasRequestBody() {
+	// name sucks - hooray bean patterns!
+	public boolean isHasRequestBody() {
 		return hasRequestBody;
 	}
 
@@ -109,20 +144,39 @@ public class ServiceMethod {
 		this.hasRequestBody = hasRequestBody;
 	}
 
+	public double getOrdering() {
+		return ordering;
+	}
+
+	public void setOrdering(double ordering) {
+		this.ordering = ordering;
+	}
+
+	@Override
+	public int compareTo(ServiceMethod other) {
+		return (int) Math.signum(ordering - other.ordering);
+	}
+
 	/**
 	 * Creates a ServiceMethod with the given name
 	 * @param name the name of the service method
 	 */
-	public ServiceMethod(String name) {
+	public ServiceMethod(String name, String verb) {
 		this.name = name;
+		this.verb = verb;
 		queryParameters = new LinkedList<>();
+		pathParameters = new LinkedList<>();
 	}
 
 	private String name;
 	private String title;
 	private String description;
-	private HttpVerb verb;
-	private String relativePath;
-	private List<String> queryParameters;
+	private final String verb;
+	private String path;
+	private boolean requiresAuthentication;
+	private String permissionRequired;
+	private final List<ServiceMethodParameter> queryParameters;
+	private final List<ServiceMethodParameter> pathParameters;
 	private boolean hasRequestBody;
+	private double ordering;
 }

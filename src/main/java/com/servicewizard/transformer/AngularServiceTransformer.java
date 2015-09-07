@@ -7,6 +7,7 @@ import java.io.PrintStream;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
+import com.servicewizard.model.ServiceMethodParameter;
 import com.servicewizard.model.ServiceModel;
 import com.servicewizard.transformer.formatting.Indentation;
 import com.servicewizard.transformer.formatting.PrettyPrintStream;
@@ -41,7 +42,7 @@ public class AngularServiceTransformer implements Transformer {
 
 					// Method parameters
 					boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
-					boolean hasRequestBody = method.hasRequestBody();
+					boolean hasRequestBody = method.isHasRequestBody();
 
 					// Function body
 					if (hasRequestBody && hasQueryParameters)
@@ -56,7 +57,7 @@ public class AngularServiceTransformer implements Transformer {
 						// Request object
 						output.println("var request = {");
 						try (Indentation requestIndent = output.indentBlock()) {
-							output.printListItem(String.format("url: urlBase + '%s'", method.getRelativePath()));
+							output.printListItem(String.format("url: urlBase + '%s'", method.getPath()));
 							output.printListItem(String.format("method: '%s'", method.getVerb()));
 
 							if (hasRequestBody)
@@ -94,8 +95,8 @@ public class AngularServiceTransformer implements Transformer {
 		// Parameters
 		if (!method.getQueryParameters().isEmpty()) {
 			output.println(" * Params:");
-			for (String parameter : method.getQueryParameters())
-				output.println(String.format(" *   %s", parameter));
+			for (ServiceMethodParameter parameter : method.getQueryParameters())
+				output.println(String.format(" *   %s", parameter.getName()));
 		}
 
 		output.println("*/");

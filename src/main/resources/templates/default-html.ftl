@@ -15,9 +15,9 @@
             <#list service.methods as method>
                 <h2>
                     [${method.verb}]
-                    ${method.relativePath!"/"}
+                    ${method.path!"/"}
                     <#if method.queryParameters?size &gt; 0>
-                        (${method.queryParameters?join(",")})
+                        (${method.queryParameterNames?join(",")})
                     </#if>
                 </h2>
                 <strong>${method.title!"(no name)"}</strong>
