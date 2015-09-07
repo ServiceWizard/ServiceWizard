@@ -4,6 +4,7 @@ package com.servicewizard.locator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,10 +42,12 @@ public class JerseyResourceLocator implements ServiceLocator {
 		Set<Class<?>> serviceClasses = reflections.getTypesAnnotatedWith(Wizard.class);
 
 		// Build each non-ignored class into a Service object
-		return serviceClasses.stream()
+		List<Service> services = serviceClasses.stream()
 				.filter(c -> !c.isAnnotationPresent(WizardIgnore.class))
 				.map(this::buildService)
 				.collect(Collectors.toList());
+		Collections.sort(services);
+		return services;
 	}
 
 	/**
@@ -81,6 +84,8 @@ public class JerseyResourceLocator implements ServiceLocator {
 				if (verb != null)
 					service.addMethod(buildMethod(verb, classMethod, resourcePath, serviceMeta));
 			}
+
+		Collections.sort(service.getMethods());
 
 		return service;
 	}
@@ -150,6 +155,9 @@ public class JerseyResourceLocator implements ServiceLocator {
 						param.getAnnotation(QueryParam.class).value(), param));
 			else if (!param.isAnnotationPresent(Context.class))
 				serviceMethod.setHasRequestBody(true);
+
+		Collections.sort(serviceMethod.getPathParameters());
+		Collections.sort(serviceMethod.getQueryParameters());
 
 		return serviceMethod;
 	}
