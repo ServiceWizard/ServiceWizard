@@ -154,7 +154,8 @@ public class ServiceMethod implements Comparable<ServiceMethod> {
 
 	@Override
 	public int compareTo(ServiceMethod other) {
-		return (int) Math.signum(ordering - other.ordering);
+		int sign = (int) Math.signum(ordering - other.ordering);
+		return sign == 0 ? title.compareTo(other.title) : sign;
 	}
 
 	/**

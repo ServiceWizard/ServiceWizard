@@ -13,7 +13,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.sampleapp.model.ToDoItem;
@@ -27,7 +26,6 @@ import com.servicewizard.annotations.WizardDesc;
 public class ToDoItemResource {
 
 	@GET
-	@Path("/all")
 	@Wizard(
 			title = "Get all",
 			description = "Gets all active todo items.")
@@ -36,7 +34,6 @@ public class ToDoItemResource {
 	}
 
 	@POST
-	@Path("/create")
 	@Wizard(
 			title = "Create todo",
 			description = "Creates a todo item. An ID will be auto-generated for it.")
@@ -48,7 +45,7 @@ public class ToDoItemResource {
 	}
 
 	@GET
-	@Path("/get/{id}")
+	@Path("/{id}")
 	@Wizard(title = "Retrieve ToDo item")
 	public ToDoItem retrieve(@PathParam("id") @WizardDesc("The ID of the item to retrieve") long id) {
 		return items.stream()
@@ -58,9 +55,9 @@ public class ToDoItemResource {
 	}
 
 	@DELETE
-	@Path("/delete")
+	@Path("/{id}")
 	@Wizard(title = "Delete ToDo item")
-	public void delete(@QueryParam("id") @WizardDesc("The ID of the item to delete") long id) {
+	public void delete(@PathParam("id") @WizardDesc("The ID of the item to delete") long id) {
 		items.remove(items.stream()
 				.filter(item -> item.getId() == id)
 				.findFirst());

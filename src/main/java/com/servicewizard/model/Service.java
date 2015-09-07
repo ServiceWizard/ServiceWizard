@@ -56,7 +56,8 @@ public class Service implements Comparable<Service> {
 
 	@Override
 	public int compareTo(Service other) {
-		return (int) Math.signum(ordering - other.ordering);
+		int sign = (int) Math.signum(ordering - other.ordering);
+		return sign == 0 ? title.compareTo(other.title) : sign;
 	}
 
 	/**
