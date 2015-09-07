@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import com.sampleapp.model.Credentials;
 import com.sampleapp.model.User;
 import com.servicewizard.annotations.Wizard;
+import com.servicewizard.model.Requirement;
 
 @Wizard(
 		name = "Authentication",
@@ -36,7 +37,7 @@ public class AuthResource {
 	@DELETE
 	@Wizard(
 			title = "Sign Out",
-			requiresAuthentication = "true",
+			requiresAuthentication = Requirement.REQUIRED,
 			ordering = 2)
 	public Object signOut() {
 		return null;
