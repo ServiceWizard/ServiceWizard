@@ -132,7 +132,6 @@ public class ServiceMethod implements Comparable<ServiceMethod> {
 	 *
 	 * POST methods will typically have a request body, while GET methods typically will not.
 	 */
-	// name sucks - hooray bean patterns!
 	public boolean isHasRequestBody() {
 		return hasRequestBody;
 	}
