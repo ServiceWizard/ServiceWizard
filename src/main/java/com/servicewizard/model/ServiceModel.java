@@ -25,13 +25,13 @@ public class ServiceModel {
 		return services;
 	}
 
+	public ServiceModel() {
+		services = new LinkedList<Service>();
+	}
+
 	private String apiName;
 
 	private String introText;
 
 	private final List<Service> services;
-
-	public ServiceModel() {
-		services = new LinkedList<Service>();
-	}
 }
