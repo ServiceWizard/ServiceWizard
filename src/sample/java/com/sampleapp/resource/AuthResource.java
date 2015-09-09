@@ -10,17 +10,22 @@ import javax.ws.rs.core.MediaType;
 
 import com.sampleapp.model.Credentials;
 import com.sampleapp.model.User;
-import com.servicewizard.ServiceWizardMethod;
-import com.servicewizard.ServiceWizardService;
+import com.servicewizard.annotations.Wizard;
+import com.servicewizard.model.Requirement;
 
-@ServiceWizardService(name = "Authentication")
+@Wizard(
+		name = "Authentication",
+		description = "Sign in and out of accounts.",
+		ordering = 1)
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
 	@POST
-	@ServiceWizardMethod(
-			title = "Sign In")
+	@Wizard(
+			title = "Sign In",
+			description = "Sign into a user account with email and password.",
+			ordering = 1)
 	public User signin(@Valid Credentials credentials) {
 		return new User() {{
 			setId("abc-123-this-is-my-user-id");
@@ -30,8 +35,10 @@ public class AuthResource {
 	}
 
 	@DELETE
-	@ServiceWizardMethod(
-			title = "Sign Out")
+	@Wizard(
+			title = "Sign Out",
+			requiresAuthentication = Requirement.REQUIRED,
+			ordering = 2)
 	public Object signOut() {
 		return null;
 	}

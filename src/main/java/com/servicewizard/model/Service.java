@@ -14,7 +14,15 @@ import java.util.List;
  *
  * Each service is generated into a single Javascript file.
  */
-public class Service {
+public class Service implements Comparable<Service> {
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	/**
 	 * The name of the service.
@@ -24,6 +32,32 @@ public class Service {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public double getOrdering() {
+		return ordering;
+	}
+
+	public void setOrdering(double ordering) {
+		this.ordering = ordering;
+	}
+
+	@Override
+	public int compareTo(Service other) {
+		int sign = (int) Math.signum(ordering - other.ordering);
+		return sign == 0 ? title.compareTo(other.title) : sign;
 	}
 
 	/**
@@ -43,12 +77,17 @@ public class Service {
 	/**
 	 * Create a service with the given name, containing no methods.
 	 */
-	public Service(String name) {
-		this.name = name;
+	public Service() {
 		methods = new LinkedList<>();
 	}
 
+	private String title;
+
 	private String name;
+
+	private String description;
+
+	private double ordering;
 
 	private List<ServiceMethod> methods;
 }

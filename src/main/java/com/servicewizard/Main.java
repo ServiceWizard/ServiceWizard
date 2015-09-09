@@ -4,12 +4,11 @@ package com.servicewizard;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import com.servicewizard.locator.JerseyResourceLocator;
-import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceModel;
 import com.servicewizard.transformer.AngularServiceTransformer;
-import com.servicewizard.transformer.MarkdownTransformer;
+import com.servicewizard.transformer.TemplateTransformer;
 import com.servicewizard.transformer.Transformer;
 
 public class Main {
@@ -23,13 +22,17 @@ public class Main {
 		if (!outputRoot.exists()) {
 			outputRoot.mkdirs();
 		}
-		List<Service> services = new JerseyResourceLocator(scanPackage).locate();
 		
+		ServiceModel model = new ServiceModel();
+		model.setApiName(moduleName); // TODO allow this to be set better
+		model.getServices().addAll(new JerseyResourceLocator(scanPackage).locate());
+
 		for (Transformer transformer : new Transformer[] {
-				new MarkdownTransformer(),
-				new AngularServiceTransformer()
+				new AngularServiceTransformer(),
+				TemplateTransformer.getDefaultMarkdownTransformer(),
+				TemplateTransformer.getDefaultHTMLTransformer()
 			}) {
-			transformer.transform(moduleName, urlBase, services, outputRoot);
+			transformer.transform(moduleName, urlBase, model, outputRoot);
 		}
 	}
 }
