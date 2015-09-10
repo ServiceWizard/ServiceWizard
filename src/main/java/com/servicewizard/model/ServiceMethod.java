@@ -107,6 +107,17 @@ public class ServiceMethod implements Comparable<ServiceMethod> {
 		queryParameters.add(param);
 	}
 
+	/**
+	 * The documentation of the method's request body parameter
+	 */
+	public String getRequestBodyDescription() {
+		return requestBodyDescription;
+	}
+
+	public void setRequestBodyDescription(String description) {
+		this.requestBodyDescription = description;
+	}
+
 	public List<String> getQueryParameterNames() {
 		return queryParameters.stream()
 				.map(p -> p.getName())
@@ -178,5 +189,6 @@ public class ServiceMethod implements Comparable<ServiceMethod> {
 	private final List<ServiceMethodParameter> queryParameters;
 	private final List<ServiceMethodParameter> pathParameters;
 	private boolean hasRequestBody;
+	private String requestBodyDescription;
 	private double ordering;
 }

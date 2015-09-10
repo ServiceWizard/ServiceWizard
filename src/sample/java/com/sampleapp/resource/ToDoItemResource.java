@@ -38,7 +38,7 @@ public class ToDoItemResource {
 			title = "Create todo",
 			description = "Creates a todo item. An ID will be auto-generated for it.")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public ToDoItem create(@Valid ToDoItem item) {
+	public ToDoItem create(@Valid @WizardDesc("The ToDoItem to be created") ToDoItem item) {
 		item.setId(nextId++);
 		items.add(item);
 		return item;

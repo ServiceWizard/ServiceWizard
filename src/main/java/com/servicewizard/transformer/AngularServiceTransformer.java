@@ -4,6 +4,8 @@ package com.servicewizard.transformer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
@@ -16,10 +18,19 @@ public class AngularServiceTransformer implements Transformer {
 
 	@Override
 	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException {
+		createModuleRoot(moduleName, serviceModel, new PrintStream(new File(outputRoot, moduleName + ".js")));
+
 		for (Service service : serviceModel.getServices()) {
 			
 			transform(moduleName, urlBase, service,
 					new PrintStream(new File(outputRoot, service.getName() + ".js")));
+		}
+	}
+
+	private void createModuleRoot(String moduleName, ServiceModel serviceModel, PrintStream outputStream)
+			throws IOException {
+		try (PrettyPrintStream output = new PrettyPrintStream(outputStream)) {
+			output.println(String.format("angular.module('%s', []);", moduleName));
 		}
 	}
 
@@ -40,27 +51,35 @@ public class AngularServiceTransformer implements Transformer {
 					// Documentation block
 					addDocumentationBlock(method, output);
 
-					// Method parameters
+					LinkedList<String> methodParameters = new LinkedList<>();
 					boolean hasQueryParameters = !method.getQueryParameters().isEmpty();
-					boolean hasRequestBody = method.isHasRequestBody();
+
+					// Path parameters become method parameters
+					methodParameters.addAll(method.getPathParameters().stream()
+							.map(ServiceMethodParameter::getName)
+							.collect(Collectors.toList()));
+
+					// Request body is a parameter called "data"
+					if (method.isHasRequestBody())
+						methodParameters.add("data");
+
+					// Query parameters are optional and become a params object
+					if (!method.getQueryParameters().isEmpty())
+						methodParameters.add("params");
+
+					String methodParamsString = methodParameters.stream()
+								.collect(Collectors.joining(", "));
 
 					// Function body
-					if (hasRequestBody && hasQueryParameters)
-						output.println(String.format("%s: function(data, params) {", method.getName()));
-					else if (hasRequestBody)
-						output.println(String.format("%s: function(data) {", method.getName()));
-					else if (hasQueryParameters)
-						output.println(String.format("%s: function(params) {", method.getName()));
-					else
-						output.println(String.format("%s: function() {", method.getName()));
+					output.println(String.format("%s: function(%s) {", method.getName(), methodParamsString));
 					try (Indentation functionIndent = output.indentBlock()) {
 						// Request object
 						output.println("var request = {");
 						try (Indentation requestIndent = output.indentBlock()) {
-							output.printListItem(String.format("url: urlBase + '%s'", method.getPath()));
+							output.printListItem(String.format("url: urlBase + %s", templateURL(method.getPath())));
 							output.printListItem(String.format("method: '%s'", method.getVerb()));
 
-							if (hasRequestBody)
+							if (method.isHasRequestBody())
 								output.printListItem("data: data");
 
 							if (hasQueryParameters)
@@ -79,7 +98,7 @@ public class AngularServiceTransformer implements Transformer {
 		output.println("}]);");
 	}
 
-	public void addDocumentationBlock(ServiceMethod method, PrettyPrintStream output) {
+	private void addDocumentationBlock(ServiceMethod method, PrettyPrintStream output) {
 		output.println("/**");
 
 		// Title
@@ -89,17 +108,56 @@ public class AngularServiceTransformer implements Transformer {
 		output.println(" *");
 
 		// Description
-		if (method.getDescription() != null)
+		if (method.getDescription() != null) {
 			output.println(String.format(" * %s", method.getDescription()));
+			output.println(" * ");
+		}
 
-		// Parameters
+		// Path parameters, which are required
+		for (ServiceMethodParameter param : method.getPathParameters()) {
+			if (param.getDescription() != null)
+				output.println(String.format(" * %s - %s", param.getName(), param.getDescription()));
+			else
+				output.println(String.format(" * %s", param.getName()));
+
+			// TODO document default value
+		}
+
+		// Request body (if required)
+		if (method.isHasRequestBody()) {
+			if (method.getRequestBodyDescription() != null)
+				output.println(String.format(" * data - %s", method.getRequestBodyDescription()));
+			else
+				output.println(" * data");
+		}
+
+		// Params object (if present)
 		if (!method.getQueryParameters().isEmpty()) {
-			output.println(" * Params:");
-			for (ServiceMethodParameter parameter : method.getQueryParameters())
-				output.println(String.format(" *   %s", parameter.getName()));
+			output.println(" * params:");
+			for (ServiceMethodParameter parameter : method.getQueryParameters()) {
+				if (parameter.getDescription() != null)
+					output.println(String.format(" *   %s - %s", parameter.getName(), parameter.getDescription()));
+				else
+					output.println(String.format(" *   %s", parameter.getName()));
+			}
 		}
 
 		output.println("*/");
+	}
+
+	private String templateURL(String url) {
+		boolean endsWithVariable = url.endsWith("}");
+		if (endsWithVariable) {
+			// Trim off the trailing '}'
+			url = url.substring(0, url.length() - 1);
+		}
+
+		String urlWithVariables = url.replaceAll("\\{", "' + ").replaceAll("\\}", " + '");
+
+		if (endsWithVariable)
+			return "'" + urlWithVariables;
+
+		return "'" + urlWithVariables + "'";
 	}
 
 }

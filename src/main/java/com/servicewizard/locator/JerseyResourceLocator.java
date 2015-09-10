@@ -109,11 +109,9 @@ public class JerseyResourceLocator implements ServiceLocator {
 	/**
 	 * Creates a ServiceMethod based on the annotations present on the given method
 	 *
-	 * @param resourcePath the path that this method's path should be relative to
 	 * @param classMethod the reflected Java method to scan for annotations
 	 */
-	private ServiceMethod buildMethod(String verb, Method classMethod, String basePath,
-			Wizard serviceMeta) {
+	private ServiceMethod buildMethod(String verb, Method classMethod, String basePath, Wizard serviceMeta) {
 		ServiceMethod serviceMethod = new ServiceMethod(classMethod.getName(), verb);
 		
 		Wizard methodMeta = classMethod.getAnnotation(Wizard.class);
@@ -149,14 +147,21 @@ public class JerseyResourceLocator implements ServiceLocator {
 
 		// parameters and request body
 		for (Parameter param : classMethod.getParameters())
-			if (param.isAnnotationPresent(PathParam.class))
+			if (param.isAnnotationPresent(PathParam.class)) {
 				serviceMethod.addPathParameter(buildParameter(
 						param.getAnnotation(PathParam.class).value(), param));
-			else if (param.isAnnotationPresent(QueryParam.class))
+			} else if (param.isAnnotationPresent(QueryParam.class)) {
 				serviceMethod.addQueryParameter(buildParameter(
 						param.getAnnotation(QueryParam.class).value(), param));
-			else if (!param.isAnnotationPresent(Context.class))
+			} else if (!param.isAnnotationPresent(Context.class)) {
 				serviceMethod.setHasRequestBody(true);
+
+				// Find description annotation on request body
+				if (param.isAnnotationPresent(WizardDesc.class)) {
+					WizardDesc bodyDesc = param.getAnnotation(WizardDesc.class);
+					serviceMethod.setRequestBodyDescription(bodyDesc.value());
+				}
+			}
 
 		Collections.sort(serviceMethod.getPathParameters());
 		Collections.sort(serviceMethod.getQueryParameters());
