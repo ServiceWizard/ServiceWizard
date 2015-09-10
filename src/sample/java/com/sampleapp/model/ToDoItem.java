@@ -9,6 +9,10 @@ package com.sampleapp.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class ToDoItem {
 
 	public long getId() {
@@ -18,6 +22,7 @@ public class ToDoItem {
 	public void setId(long id) {
 		this.id = id;
 	}
+
 
 	public String getDescription() {
 		return description;
@@ -44,7 +49,10 @@ public class ToDoItem {
 		this.dueDate = dueDate;
 	}
 
+	@NotEmpty
 	private long id;
 	private String description;
+
+	@NotNull
 	private Date dueDate;
 }

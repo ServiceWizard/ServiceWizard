@@ -55,6 +55,7 @@ configurations {
 dependencies {
     compile 'io.dropwizard:dropwizard-core:0.8.4'
     compile 'org.reflections:reflections:0.9.9'
+    compile 'org.freemarker:freemarker:2.3.23'
     sampleCompile sourceSets.main.output
     testCompile 'junit:junit:4.11'
 }

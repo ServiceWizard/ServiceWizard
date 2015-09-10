@@ -1,9 +1,10 @@
 package com.sampleapp;
 
 import com.sampleapp.resource.AuthResource;
-import com.sampleapp.resource.DocsResource;
+import com.sampleapp.resource.CustomDocsResource;
 import com.sampleapp.resource.ToDoItemResource;
 import com.sampleapp.resource.UserResource;
+import com.servicewizard.resource.DefaultHTMLDocumentationResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -15,6 +16,11 @@ public class ToDoAPI extends Application<Configuration> {
         new ToDoAPI().run(args);
     }
 
+	@Override
+	public String getName() {
+		return "ToDo API";
+	}
+
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
     }
@@ -24,6 +30,7 @@ public class ToDoAPI extends Application<Configuration> {
         environment.jersey().register(new ToDoItemResource());
         environment.jersey().register(new AuthResource());
 		environment.jersey().register(new UserResource());
-		environment.jersey().register(new DocsResource());
+		environment.jersey().register(new DefaultHTMLDocumentationResource(getName(), "com.sampleapp"));
+		environment.jersey().register(new CustomDocsResource(getName(), "com.sampleapp"));
     }
 }

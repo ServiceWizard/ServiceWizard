@@ -17,10 +17,10 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.sampleapp.model.User;
-import com.servicewizard.ServiceWizardMethod;
-import com.servicewizard.ServiceWizardService;
+import com.servicewizard.annotations.Wizard;
+import com.servicewizard.annotations.WizardDesc;
 
-@ServiceWizardService(name = "Users")
+@Wizard(name = "Users")
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ public class UserResource {
 	}
 
 	@POST
-	@ServiceWizardMethod(
+	@Wizard(
 			title = "Register a new account",
 			description = "Create a new account with email, password, and name.")
 	public User createUser(final @Valid Registration registration) {
@@ -78,12 +78,12 @@ public class UserResource {
 	}
 
 	@GET
-	@ServiceWizardMethod(
+	@Wizard(
 			title = "List all users",
 			description = "A paginated list of all users.")
 	public List<User> listUsers(
-			@QueryParam("page") @DefaultValue("1") String page,
-			@QueryParam("perPage") @DefaultValue("50") String perPage) {
+			@QueryParam("page") @WizardDesc("Page number") @DefaultValue("1") String page,
+			@QueryParam("perPage") @WizardDesc("Number of items per page") @DefaultValue("50") String perPage) {
 		List<User> users = new LinkedList<>();
 		for (int i = 0; i < Integer.parseInt(perPage); i++) {
 			User user = new User();

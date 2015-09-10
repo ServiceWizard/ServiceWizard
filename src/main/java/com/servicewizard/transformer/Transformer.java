@@ -2,9 +2,8 @@ package com.servicewizard.transformer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-import com.servicewizard.model.Service;
+import com.servicewizard.model.ServiceModel;
 
 public interface Transformer {
 	/**
@@ -16,5 +15,5 @@ public interface Transformer {
 	 * @param outputRoot The root output directory to build into.
 	 * @throws IOException If an exception occurs writing the output files.
 	 */
-	public void transform(String moduleName, String urlBase, List<Service> services, File outputRoot) throws IOException;
+	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException;
 }
