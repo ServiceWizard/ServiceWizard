@@ -5,52 +5,51 @@ Automatically generate API documentation and Javascript client code for your Dro
 Take for example a very simple ToDo application's API:
 
 ```Java
-@Path("/todoItem")
+@Wizard(name = "ToDos")
+@Path("/toDoItem")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-@ServiceWizardService(name="TodoService")
-public class ToDoItemService {
+public class ToDoItemResource {
 
 	@POST
-	@Path("/create")
-	@ServiceWizardMethod(
-		title="Create todo",
-		description="Creates a todo item."
-	)
+	@Wizard(
+			title = "Create todo",
+			description = "Creates a todo item. An ID will be auto-generated for it.")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void create(ToDoItem item) {
-		// ...implementation...
+	public ToDoItem create(@Valid @WizardDesc("The ToDoItem to be created") ToDoItem item) {
+		// ...snip...
 	}
 
 	@GET
-	@Path("/get")
-	@ServiceWizardMethod(
-		title="Get todo item",
-		description="Gets an existing todo item by id."
-	)
-	public ToDoItem get(@QueryParam("id") long id) {
-		// ...implementation...
+	@Path("/{id}")
+	@Wizard(title = "Retrieve ToDo item")
+	public ToDoItem retrieve(@PathParam("id") @WizardDesc("The ID of the item to retrieve") long id) {
+		// ...snip...
 	}
-
 }
 ```
-	
-ServiceWizard can create an Angular service to consume this API:
+
+Aside from the typical annotations for a Dropwizard project, this class and its methods use the Wizard annotations to
+ add documentation information.
+
+By scanning these annotations ServiceWizard can create an Angular service to consume this API:
 	
 ```Javascript
-angular.module('ToDoApp')
-.factory('TodoService', ['$http', function($http) {
+angular.module('ToDoSDK')
+.factory('ToDos', ['$http', function($http) {
     var urlBase = 'http://localhost:8080';
     return {
 
         /**
          * Create todo
          *
-         * Creates a todo item.
+         * Creates a todo item. An ID will be auto-generated for it.
+         *
+         * data - The ToDoItem to be created
         */
         create: function(data) {
             var request = {
-                url: urlBase + '/todoItem/create',
+                url: urlBase + '/toDoItem',
                 method: 'POST',
                 data: data
             };
@@ -58,24 +57,21 @@ angular.module('ToDoApp')
         },
 
         /**
-         * Get todo item
+         * Retrieve ToDo item
          *
-         * Gets an existing todo item by id.
-         * Params:
-         *   id
+         * id - The ID of the item to retrieve
         */
-        get: function(params) {
+        retrieve: function(id) {
             var request = {
-                url: urlBase + '/todoItem/get',
-                method: 'GET',
-                params: params
+                url: urlBase + '/toDoItem/' + id,
+                method: 'GET'
             };
             return $http(request);
         }
     };
 }]);
 ```
-	
+
 It can also create documentation for this API in Markdown:
 # TodoService
 ## [POST]   /todoItem/create
