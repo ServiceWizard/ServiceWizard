@@ -127,9 +127,9 @@ public class AngularServiceTransformer implements Transformer {
 		// Path parameters, which are required
 		for (ServiceMethodParameter param : method.getPathParameters()) {
 			if (param.getDescription() != null)
-				output.println(String.format(" * %s - %s", param.getName(), param.getDescription()));
+				output.println(String.format(" * @param %s - %s", param.getName(), param.getDescription()));
 			else
-				output.println(String.format(" * %s", param.getName()));
+				output.println(String.format(" * @param %s", param.getName()));
 
 			// TODO document default value
 		}
@@ -137,14 +137,14 @@ public class AngularServiceTransformer implements Transformer {
 		// Request body (if required)
 		if (method.isHasRequestBody()) {
 			if (method.getRequestBodyDescription() != null)
-				output.println(String.format(" * %s - %s", REQUEST_BODY_PARAM_NAME, method.getRequestBodyDescription()));
+				output.println(String.format(" * @param %s - %s", REQUEST_BODY_PARAM_NAME, method.getRequestBodyDescription()));
 			else
-				output.println(String.format(" * %s", REQUEST_BODY_PARAM_NAME));
+				output.println(String.format(" * @param %s", REQUEST_BODY_PARAM_NAME));
 		}
 
 		// Params object (if present)
 		if (!method.getQueryParameters().isEmpty()) {
-			output.println(String.format(" * %s:", QUERY_PARAMS_OBJECT_NAME));
+			output.println(String.format(" * @param %s - optional parameters", QUERY_PARAMS_OBJECT_NAME));
 			for (ServiceMethodParameter parameter : method.getQueryParameters()) {
 				if (parameter.getDescription() != null)
 					output.println(String.format(" *   %s - %s", parameter.getName(), parameter.getDescription()));

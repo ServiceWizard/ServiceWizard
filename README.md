@@ -45,7 +45,7 @@ angular.module('ToDoSDK')
          *
          * Creates a todo item. An ID will be auto-generated for it.
          *
-         * data - The ToDoItem to be created
+         * @param data - The ToDoItem to be created
         */
         create: function(data) {
             var request = {
@@ -59,7 +59,7 @@ angular.module('ToDoSDK')
         /**
          * Retrieve ToDo item
          *
-         * id - The ID of the item to retrieve
+         * @param id - The ID of the item to retrieve
         */
         retrieve: function(id) {
             var request = {
