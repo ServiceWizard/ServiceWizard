@@ -16,6 +16,16 @@ import com.servicewizard.transformer.formatting.PrettyPrintStream;
 
 public class AngularServiceTransformer implements Transformer {
 
+	/**
+	 * The name of the parameter that will be passed as the request body
+	 */
+	public static final String REQUEST_BODY_PARAM_NAME = "data";
+
+	/**
+	 * The name of the params object that will contain the query parameters
+	 */
+	public static final String QUERY_PARAMS_OBJECT_NAME = "params";
+
 	@Override
 	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException {
 		createModuleRoot(moduleName, serviceModel, new PrintStream(new File(outputRoot, moduleName + ".js")));
@@ -46,6 +56,7 @@ public class AngularServiceTransformer implements Transformer {
 
 			try (Indentation returnIndent = output.indentBlock()) {
 				for (ServiceMethod method : service.getMethods()) {
+					validateMethod(method);
 					output.println();
 
 					// Documentation block
@@ -61,11 +72,11 @@ public class AngularServiceTransformer implements Transformer {
 
 					// Request body is a parameter called "data"
 					if (method.isHasRequestBody())
-						methodParameters.add("data");
+						methodParameters.add(REQUEST_BODY_PARAM_NAME);
 
 					// Query parameters are optional and become a params object
 					if (!method.getQueryParameters().isEmpty())
-						methodParameters.add("params");
+						methodParameters.add(QUERY_PARAMS_OBJECT_NAME);
 
 					String methodParamsString = methodParameters.stream()
 								.collect(Collectors.joining(", "));
@@ -80,10 +91,10 @@ public class AngularServiceTransformer implements Transformer {
 							output.printListItem(String.format("method: '%s'", method.getVerb()));
 
 							if (method.isHasRequestBody())
-								output.printListItem("data: data");
+								output.printListItem(String.format("data: %s", REQUEST_BODY_PARAM_NAME));
 
 							if (hasQueryParameters)
-								output.printListItem("params: params");
+								output.printListItem(String.format("params: %s", QUERY_PARAMS_OBJECT_NAME));
 							output.endList();
 						}
 						output.println("};");
@@ -126,14 +137,14 @@ public class AngularServiceTransformer implements Transformer {
 		// Request body (if required)
 		if (method.isHasRequestBody()) {
 			if (method.getRequestBodyDescription() != null)
-				output.println(String.format(" * data - %s", method.getRequestBodyDescription()));
+				output.println(String.format(" * %s - %s", REQUEST_BODY_PARAM_NAME, method.getRequestBodyDescription()));
 			else
-				output.println(" * data");
+				output.println(String.format(" * %s", REQUEST_BODY_PARAM_NAME));
 		}
 
 		// Params object (if present)
 		if (!method.getQueryParameters().isEmpty()) {
-			output.println(" * params:");
+			output.println(String.format(" * %s:", QUERY_PARAMS_OBJECT_NAME));
 			for (ServiceMethodParameter parameter : method.getQueryParameters()) {
 				if (parameter.getDescription() != null)
 					output.println(String.format(" *   %s - %s", parameter.getName(), parameter.getDescription()));
@@ -160,4 +171,28 @@ public class AngularServiceTransformer implements Transformer {
 		return "'" + urlWithVariables + "'";
 	}
 
+	/**
+	 * Validates that the state of the method for code generation. If any properties of the method would prevent
+	 * proper code generation, prints a warning to the user detailing the problem.
+	 *
+	 * Specifically this will check that parameter names do not collide.
+	 */
+	private void validateMethod(ServiceMethod method) {
+		// "data" cannot be a path param
+		if (method.isHasRequestBody() && method.getPathParameters().stream().anyMatch(
+				param -> param.getName().equals(REQUEST_BODY_PARAM_NAME))) {
+			System.out.println(
+					String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for request body",
+					method.getName(),
+					REQUEST_BODY_PARAM_NAME));
+		}
+
+		// If query params are present, cannot use query params name as a path params
+		if (!method.getQueryParameters().isEmpty()
+				&& method.getPathParameters().stream().anyMatch(param -> param.getName().equals(QUERY_PARAMS_OBJECT_NAME))) {
+			System.out.println(String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
+					method.getName(),
+					QUERY_PARAMS_OBJECT_NAME));
+		}
+	}
 }
