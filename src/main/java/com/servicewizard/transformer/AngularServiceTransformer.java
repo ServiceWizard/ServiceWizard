@@ -178,7 +178,7 @@ public class AngularServiceTransformer implements Transformer {
 	 * Specifically this will check that parameter names do not collide.
 	 */
 	private void validateMethod(ServiceMethod method) {
-		// "data" cannot be a path param
+		// A path param cannot be the same as the generated request body parameter
 		if (method.isHasRequestBody() && method.getPathParameters().stream().anyMatch(
 				param -> param.getName().equals(REQUEST_BODY_PARAM_NAME))) {
 			System.out.println(
@@ -187,7 +187,7 @@ public class AngularServiceTransformer implements Transformer {
 					REQUEST_BODY_PARAM_NAME));
 		}
 
-		// If query params are present, cannot use query params name as a path params
+		// If query params are present, cannot use generated query params name as a path params
 		if (!method.getQueryParameters().isEmpty()
 				&& method.getPathParameters().stream().anyMatch(param -> param.getName().equals(QUERY_PARAMS_OBJECT_NAME))) {
 			System.out.println(String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
