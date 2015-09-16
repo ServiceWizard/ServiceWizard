@@ -187,7 +187,7 @@ public class AngularServiceTransformer implements Transformer {
 					REQUEST_BODY_PARAM_NAME));
 		}
 
-		// If query params are present, cannot use generated query params name as a path params
+		// If query params are present, cannot use generated query params name as a path param
 		if (!method.getQueryParameters().isEmpty()
 				&& method.getPathParameters().stream().anyMatch(param -> param.getName().equals(QUERY_PARAMS_OBJECT_NAME))) {
 			System.out.println(String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
