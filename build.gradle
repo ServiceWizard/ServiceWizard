@@ -63,9 +63,25 @@ dependencies {
 
 mainClassName = 'com.servicewizard.ServiceWizard'
 
-run {
+task buildSampleAngular (type:JavaExec) {
+    main mainClassName
     classpath sourceSets.sample.runtimeClasspath
-    args '-t', 'angular', '-m', 'todo', '-u', 'http://localhost:8080', '-f', 'output', 'com.sampleapp'
+    args '-n', 'ToDo API', '-t', 'angular', '-m', 'todo', '-u', 'http://localhost:8080', '-f', 'output', 'com.sampleapp'
+}
+
+task buildSampleHTML (type:JavaExec) {
+    main mainClassName
+    classpath sourceSets.sample.runtimeClasspath
+    args '-n', 'ToDo API', '-t', 'default_html', '-u', 'http://localhost:8080', '-f', 'output/docs.html', 'com.sampleapp'
+}
+
+task buildSampleMarkdown (type:JavaExec) {
+    main mainClassName
+    classpath sourceSets.sample.runtimeClasspath
+    args '-n', 'ToDo API', '-t', 'default_markdown', '-u', 'http://localhost:8080', '-f', 'output/docs.md', 'com.sampleapp'
+}
+
+task buildSamples (dependsOn: [buildSampleAngular, buildSampleHTML, buildSampleMarkdown]) {
 }
 
 task sample (type:JavaExec) {
