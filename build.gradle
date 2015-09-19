@@ -61,11 +61,11 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
-mainClassName = 'com.servicewizard.Main'
+mainClassName = 'com.servicewizard.ServiceWizard'
 
 run {
     classpath sourceSets.sample.runtimeClasspath
-    args 'com.sampleapp.resource', 'output', 'ToDoSDK', 'http://localhost:8080'
+    args '-t', 'angular', '-m', 'todo', '-u', 'http://localhost:8080', '-f', 'output', 'com.sampleapp'
 }
 
 task sample (type:JavaExec) {
