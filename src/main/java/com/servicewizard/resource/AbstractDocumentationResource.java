@@ -13,10 +13,6 @@ public abstract class AbstractDocumentationResource {
 		return documentation;
 	}
 
-	public AbstractDocumentationResource(String apiName, TemplateTransformer transformer, ServiceLocator locator) {
-		cacheDocumentation(transformer, buildModel(apiName, locator));
-	}
-
 	protected ServiceModel buildModel(final String apiName, final ServiceLocator locator) {
 		return new ServiceModel() {
 			{
@@ -26,16 +22,20 @@ public abstract class AbstractDocumentationResource {
 		};
 	}
 
-	private void cacheDocumentation(TemplateTransformer transformer, ServiceModel serviceModel) {
+	private void cacheDocumentation(TemplateTransformer transformer, String urlBase, ServiceModel serviceModel) {
 		StringWriter writer = new StringWriter();
 
 		try {
-			transformer.transform(serviceModel, writer);
+			transformer.transform(urlBase, serviceModel, writer);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		documentation = writer.toString();
+	}
+
+	public AbstractDocumentationResource(String apiName, String urlBase, TemplateTransformer transformer, ServiceLocator locator) {
+		cacheDocumentation(transformer, urlBase, buildModel(apiName, locator));
 	}
 
 	private String documentation;

@@ -4,9 +4,12 @@ package com.servicewizard.transformer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.servicewizard.config.TransformerConfiguration;
+import com.servicewizard.config.TransformerType;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 import com.servicewizard.model.ServiceMethodParameter;
@@ -27,13 +30,16 @@ public class AngularServiceTransformer implements Transformer {
 	public static final String QUERY_PARAMS_OBJECT_NAME = "params";
 
 	@Override
-	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException {
-		createModuleRoot(moduleName, serviceModel, new PrintStream(new File(outputRoot, moduleName + ".js")));
+	public void transformToFile(String urlBase, ServiceModel serviceModel) throws IOException {
+		File root = new File(config.getOutputFilePath());
+		root.mkdirs();
+
+		createModuleRoot(config.getModuleName(), serviceModel,
+				new PrintStream(new File(root, config.getModuleName() + ".js")));
 
 		for (Service service : serviceModel.getServices()) {
-			
-			transform(moduleName, urlBase, service,
-					new PrintStream(new File(outputRoot, service.getName() + ".js")));
+			transform(config.getModuleName(), urlBase, service,
+					new PrintStream(new File(root, config.getModuleName() + "." + service.getName() + ".js")));
 		}
 	}
 
@@ -194,5 +200,23 @@ public class AngularServiceTransformer implements Transformer {
 					method.getName(),
 					QUERY_PARAMS_OBJECT_NAME));
 		}
+	}
+
+	@Override
+	public void transform(String urlBase, ServiceModel model, Writer writer) {
+		throw new UnsupportedOperationException();
+	}
+
+	private final TransformerConfiguration config;
+
+	public AngularServiceTransformer(TransformerConfiguration config) {
+		// validate that this config will work for this transformer
+		if (config.getEnumType() != TransformerType.ANGULAR)
+			throw new IllegalArgumentException("Invalid transformer type: " + config.getEnumType().name());
+		if (config.getModuleName() == null)
+			throw new IllegalArgumentException("Module name is required for angular transformation.");
+		if (config.getOutputFilePath() == null)
+			throw new IllegalArgumentException("Output path is required for angular transformation.");
+		this.config = config;
 	}
 }

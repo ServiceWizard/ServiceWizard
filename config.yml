@@ -6,7 +6,6 @@ server:
     - type: http
       port: 8081
 
-# Logging settings.
 logging:
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
@@ -14,3 +13,15 @@ logging:
 
   appenders:
     - type: console
+
+serviceWizard:
+  baseUrl: "http://localhost:8080"
+  apiName: "Sample application"
+  transformers:
+    - type: angular
+      moduleName: "todo"
+      outputFilePath: "./output/js"
+    - type: default_html
+      outputFilePath: "./output/docs.html"
+    - type: default_markdown
+      outputFilePath: "./output/markdown.md"

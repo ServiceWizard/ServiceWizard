@@ -18,8 +18,8 @@ import com.servicewizard.transformer.TemplateTransformer;
 @Path("/docs")
 @Produces(MediaType.TEXT_HTML)
 public final class DefaultHTMLDocumentationResource extends AbstractDocumentationResource {
-	public DefaultHTMLDocumentationResource(String apiName, String packagePath) {
-		super(apiName, TemplateTransformer.getDefaultHTMLTransformer(), new JerseyResourceLocator(packagePath));
+	public DefaultHTMLDocumentationResource(String apiName, String urlBase, String packagePath) {
+		super(apiName, urlBase, TemplateTransformer.getDefaultHTMLTransformer(), new JerseyResourceLocator(packagePath));
 	}
 	
 	@GET
