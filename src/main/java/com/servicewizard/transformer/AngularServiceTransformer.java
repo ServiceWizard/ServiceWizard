@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.servicewizard.Log;
 import com.servicewizard.config.TransformerConfiguration;
 import com.servicewizard.config.TransformerType;
 import com.servicewizard.model.Service;
@@ -187,8 +188,8 @@ public class AngularServiceTransformer implements Transformer {
 		// A path param cannot be the same as the generated request body parameter
 		if (method.isHasRequestBody() && method.getPathParameters().stream().anyMatch(
 				param -> param.getName().equals(REQUEST_BODY_PARAM_NAME))) {
-			System.out.println(
-					String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for request body",
+			Log.warning(String.format(
+					"When generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for request body",
 					method.getName(),
 					REQUEST_BODY_PARAM_NAME));
 		}
@@ -196,7 +197,8 @@ public class AngularServiceTransformer implements Transformer {
 		// If query params are present, cannot use generated query params name as a path param
 		if (!method.getQueryParameters().isEmpty()
 				&& method.getPathParameters().stream().anyMatch(param -> param.getName().equals(QUERY_PARAMS_OBJECT_NAME))) {
-			System.out.println(String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
+			Log.warning(String.format(
+					"When generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
 					method.getName(),
 					QUERY_PARAMS_OBJECT_NAME));
 		}

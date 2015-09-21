@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -23,69 +24,104 @@ import com.servicewizard.transformer.Transformer;
 
 public class ServiceWizard {
 
-	public static void main(String... args) throws IOException, ParseException {
+	private static final String COMMAND_STRING = "ServiceWizard [options] packagePath";
+
+	public static void main(String... args) throws IOException {
+		Log.setUseLogger(false);
+
 		Options options = new Options()
 				.addOption(Option
 						.builder("t")
 						.longOpt("type")
 						.hasArg()
+						.argName("type")
 						.desc("The template type to use. Choose from: " + TransformerType.getNameString())
-						.required()
 						.build())
 				.addOption(Option
-						.builder("template")
+						.builder()
+						.longOpt("template")
 						.hasArg()
+						.argName("filepath")
 						.desc("Relative path to a file to be used as a custom template.")
 						.build())
 				.addOption(Option
 						.builder("f")
 						.longOpt("output-file")
 						.hasArg()
+						.argName("filepath")
 						.desc("Output file path.")
 						.build())
 				.addOption(Option
 						.builder("m")
 						.longOpt("module")
 						.hasArg()
+						.argName("name")
 						.desc("The name of the module to build code for, if applicable.")
 						.build())
 				.addOption(Option
 						.builder("n")
 						.longOpt("name")
 						.hasArg()
+						.argName("name")
 						.desc("The name of the API.")
 						.build())
 				.addOption(Option
 						.builder("u")
 						.longOpt("url")
 						.hasArg()
+						.argName("url")
 						.desc("The base URL at which the API will be running.")
-						.required()
 						.build())
 				.addOption(Option
-						.builder("overview")
+						.builder()
+						.longOpt("overview")
 						.hasArg()
+						.argName("path")
 						.desc("Relative path to a file to be used as overview text.")
+						.build())
+				.addOption(Option
+						.builder("h")
+						.longOpt("help")
+						.desc("Print this message and exit.")
 						.build());
-		CommandLine commands = new DefaultParser().parse(options, args);
-		
-		if (commands.getArgList().size() < 1)
-			throw new IllegalArgumentException("Package path required.");
-		String packagePath = commands.getArgList().get(0);
 
-		ServiceWizardConfiguration config = new ServiceWizardConfiguration();
-		config.setBaseUrl(commands.getOptionValue("u"));
-		config.setApiName(commands.getOptionValue("n"));
-		config.setOverviewPath(commands.getOptionValue("overview"));
+		HelpFormatter help = new HelpFormatter();
 
-		TransformerConfiguration transformerConfig = new TransformerConfiguration();
-		transformerConfig.setModuleName(commands.getOptionValue("m"));
-		transformerConfig.setType(commands.getOptionValue("t"));
-		transformerConfig.setTemplatePath(commands.getOptionValue("template"));
-		transformerConfig.setOutputFilePath(commands.getOptionValue("f"));
-		config.getTransformers().add(transformerConfig);
-		
-		process(config, packagePath);
+		try {
+			CommandLine commands = new DefaultParser().parse(options, args);
+
+			if (commands.hasOption("h"))
+				help.printHelp(COMMAND_STRING, options);
+			else {
+				if (commands.getArgList().size() < 1)
+					throw new IllegalArgumentException("Package path required.");
+				else if (!commands.hasOption("t"))
+					throw new IllegalArgumentException("Template type is required.");
+				else if (!commands.hasOption("u"))
+					throw new IllegalArgumentException("URL is required.");
+
+				String packagePath = commands.getArgList().get(0);
+
+				ServiceWizardConfiguration config = new ServiceWizardConfiguration();
+				config.setBaseUrl(commands.getOptionValue("u"));
+				config.setApiName(commands.getOptionValue("n"));
+				config.setOverviewPath(commands.getOptionValue("overview"));
+
+				TransformerConfiguration transformerConfig = new TransformerConfiguration();
+				transformerConfig.setModuleName(commands.getOptionValue("m"));
+				transformerConfig.setType(commands.getOptionValue("t"));
+				transformerConfig.setTemplatePath(commands.getOptionValue("template"));
+				transformerConfig.setOutputFilePath(commands.getOptionValue("f"));
+				config.getTransformers().add(transformerConfig);
+
+				process(config, packagePath);
+			}
+		} catch (ParseException | RuntimeException e) {
+			// don't print out a full stack trace to a CLI user
+			Log.error(e.getMessage());
+			if (e instanceof ParseException)
+				help.printHelp(COMMAND_STRING, options);
+		}
 	}
 
 	/**

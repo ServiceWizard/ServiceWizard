@@ -3,6 +3,7 @@ package com.servicewizard.resource;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import com.servicewizard.Log;
 import com.servicewizard.locator.ServiceLocator;
 import com.servicewizard.model.ServiceModel;
 import com.servicewizard.transformer.TemplateTransformer;
@@ -28,7 +29,7 @@ public abstract class AbstractDocumentationResource {
 		try {
 			transformer.transform(urlBase, serviceModel, writer);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 
 		documentation = writer.toString();
