@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum TransformerType {
-	CUSTOM, ANGULAR, DEFAULT_HTML, DEFAULT_MARKDOWN;
+	CUSTOM_TEMPLATE, ANGULAR, DEFAULT_HTML, DEFAULT_MARKDOWN;
 
 	public static String getNameString() {
 		List<String> names = new LinkedList<>();

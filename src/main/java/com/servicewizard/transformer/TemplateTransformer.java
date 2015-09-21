@@ -44,7 +44,7 @@ public class TemplateTransformer implements Transformer {
 	@Override
 	public void transformToFile(String baseUrl, ServiceModel serviceModel) throws IOException {
 		if (config.getOutputFilePath() == null) {
-			throw new RuntimeException(
+			throw new IllegalStateException(
 					"An output file path must be set in order to write to a file.");
 		}
 		File output = new File(config.getOutputFilePath());
@@ -65,7 +65,7 @@ public class TemplateTransformer implements Transformer {
 	public TemplateTransformer(String filePath) {
 		this(new TransformerConfiguration() {
 			{
-				setType(TransformerType.CUSTOM.name());
+				setType(TransformerType.CUSTOM_TEMPLATE.name());
 				setTemplatePath(filePath);
 			}
 		});
@@ -78,7 +78,7 @@ public class TemplateTransformer implements Transformer {
 			reader = new InputStreamReader(TemplateTransformer.class.getResourceAsStream(BUILTIN_HTML_TEMPLATE));
 		else if (type == TransformerType.DEFAULT_MARKDOWN)
 			reader = new InputStreamReader(TemplateTransformer.class.getResourceAsStream(BUILTIN_MARKDOWN_TEMPLATE));
-		else if (type == TransformerType.CUSTOM) {
+		else if (type == TransformerType.CUSTOM_TEMPLATE) {
 			if (config.getTemplatePath() == null)
 				throw new IllegalArgumentException("Template path must be set when transformer type is CUSTOM.");
 			try {

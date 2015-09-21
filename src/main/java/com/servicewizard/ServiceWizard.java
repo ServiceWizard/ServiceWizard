@@ -65,7 +65,7 @@ public class ServiceWizard {
 				.addOption(Option
 						.builder("overview")
 						.hasArg()
-						.desc("Relative path ot a file to be used as overview text.")
+						.desc("Relative path to a file to be used as overview text.")
 						.build());
 		CommandLine commands = new DefaultParser().parse(options, args);
 		
@@ -116,7 +116,7 @@ public class ServiceWizard {
 		switch (config.getEnumType()) {
 			case ANGULAR:
 				return new AngularServiceTransformer(config);
-			case CUSTOM:
+			case CUSTOM_TEMPLATE:
 			case DEFAULT_HTML:
 			case DEFAULT_MARKDOWN:
 				return new TemplateTransformer(config);
