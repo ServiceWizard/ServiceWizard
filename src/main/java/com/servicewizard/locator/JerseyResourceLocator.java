@@ -18,6 +18,7 @@ import javax.ws.rs.core.Context;
 
 import org.reflections.Reflections;
 
+import com.servicewizard.Log;
 import com.servicewizard.annotations.Wizard;
 import com.servicewizard.annotations.WizardDesc;
 import com.servicewizard.annotations.WizardIgnore;
@@ -48,6 +49,8 @@ public class JerseyResourceLocator implements ServiceLocator {
 				.map(this::buildService)
 				.collect(Collectors.toList());
 		Collections.sort(services);
+		if (services.size() == 0)
+			Log.warning("No services discovered in package path: " + packageName);
 		return services;
 	}
 
@@ -64,6 +67,7 @@ public class JerseyResourceLocator implements ServiceLocator {
 	 * Creates a Service object based on the annotations present on the given class
 	 */
 	private Service buildService(Class<?> serviceClass) {
+		Log.info("Checking resource: " + serviceClass.getName());
 		Wizard serviceMeta = serviceClass.getAnnotation(Wizard.class);
 
 		Service service = new Service();
@@ -82,8 +86,16 @@ public class JerseyResourceLocator implements ServiceLocator {
 		for (Method classMethod : serviceClass.getMethods())
 			if (!classMethod.isAnnotationPresent(WizardIgnore.class)) {
 				String verb = getVerb(classMethod);
-				if (verb != null)
-					service.addMethod(buildMethod(verb, classMethod, resourcePath, serviceMeta));
+				if (verb != null) {
+					ServiceMethod serviceMethod = buildMethod(verb, classMethod, resourcePath, serviceMeta);
+					service.addMethod(serviceMethod);
+					Log.info(String.format(
+							"Discovered %s.%s (%s %s)",
+							serviceClass.getSimpleName(),
+							classMethod.getName(),
+							serviceMethod.getVerb(),
+							serviceMethod.getPath()));
+				}
 			}
 
 		Collections.sort(service.getMethods());
