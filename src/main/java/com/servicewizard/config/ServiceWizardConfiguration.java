@@ -5,8 +5,7 @@ import java.util.List;
 
 /**
  * Bean-compliant configuration class, usable by dropwizard.
- * 
- * @author forana
+ *
  */
 public class ServiceWizardConfiguration {
 	/**

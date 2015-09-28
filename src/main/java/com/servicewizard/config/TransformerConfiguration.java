@@ -14,7 +14,7 @@ public class TransformerConfiguration {
 		this.type = type;
 	}
 
-	public TransformerType getEnumType() {
+	public TransformerType getTransformerType() {
 		return TransformerType.valueOf(type.toUpperCase());
 	}
 

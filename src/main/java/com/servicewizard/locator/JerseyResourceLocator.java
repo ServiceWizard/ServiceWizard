@@ -67,7 +67,7 @@ public class JerseyResourceLocator implements ServiceLocator {
 	 * Creates a Service object based on the annotations present on the given class
 	 */
 	private Service buildService(Class<?> serviceClass) {
-		Log.info("Checking resource: " + serviceClass.getName());
+		Log.info("Discovered resource: " + serviceClass.getName());
 		Wizard serviceMeta = serviceClass.getAnnotation(Wizard.class);
 
 		Service service = new Service();
