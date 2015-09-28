@@ -73,7 +73,7 @@ public class TemplateTransformer implements Transformer {
 
 	public TemplateTransformer(TransformerConfiguration config){
 		Reader reader = null;
-		TransformerType type = config.getEnumType();
+		TransformerType type = config.getTransformerType();
 		if (type == TransformerType.DEFAULT_HTML)
 			reader = new InputStreamReader(TemplateTransformer.class.getResourceAsStream(BUILTIN_HTML_TEMPLATE));
 		else if (type == TransformerType.DEFAULT_MARKDOWN)

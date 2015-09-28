@@ -213,8 +213,8 @@ public class AngularServiceTransformer implements Transformer {
 
 	public AngularServiceTransformer(TransformerConfiguration config) {
 		// validate that this config will work for this transformer
-		if (config.getEnumType() != TransformerType.ANGULAR)
-			throw new IllegalArgumentException("Invalid transformer type: " + config.getEnumType().name());
+		if (config.getTransformerType() != TransformerType.ANGULAR)
+			throw new IllegalArgumentException("Invalid transformer type: " + config.getTransformerType().name());
 		if (config.getModuleName() == null)
 			throw new IllegalArgumentException("Module name is required for angular transformation.");
 		if (config.getOutputFilePath() == null)

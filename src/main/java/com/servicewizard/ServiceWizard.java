@@ -149,7 +149,7 @@ public class ServiceWizard {
 	}
 
 	private static Transformer getTransformer(TransformerConfiguration config) {
-		switch (config.getEnumType()) {
+		switch (config.getTransformerType()) {
 			case ANGULAR:
 				return new AngularServiceTransformer(config);
 			case CUSTOM_TEMPLATE:

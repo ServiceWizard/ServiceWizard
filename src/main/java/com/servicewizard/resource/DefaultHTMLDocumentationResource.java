@@ -12,8 +12,7 @@ import com.servicewizard.transformer.TemplateTransformer;
  * A default concrete subclass of <code>AbstractDocumentationResource</code>. This will serve docs
  * at <code>/docs</code>, using the default built-in template. For any behavior other than this, use
  * a custom subclass of <code>AbstractDocumentationResource</code>.
- * 
- * @author forana
+ *
  */
 @Path("/docs")
 @Produces(MediaType.TEXT_HTML)
