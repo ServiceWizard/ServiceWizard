@@ -56,15 +56,32 @@ dependencies {
     compile 'io.dropwizard:dropwizard-core:0.8.4'
     compile 'org.reflections:reflections:0.9.9'
     compile 'org.freemarker:freemarker:2.3.23'
+    compile 'commons-cli:commons-cli:1.3.1'
     sampleCompile sourceSets.main.output
     testCompile 'junit:junit:4.11'
 }
 
-mainClassName = 'com.servicewizard.Main'
+mainClassName = 'com.servicewizard.ServiceWizard'
 
-run {
+task buildSampleAngular (type:JavaExec) {
+    main mainClassName
     classpath sourceSets.sample.runtimeClasspath
-    args 'com.sampleapp.resource', 'output', 'ToDoSDK', 'http://localhost:8080'
+    args '-n', 'ToDo API', '-t', 'angular', '-m', 'todo', '-u', 'http://localhost:8080', '-f', 'output', 'com.sampleapp'
+}
+
+task buildSampleHTML (type:JavaExec) {
+    main mainClassName
+    classpath sourceSets.sample.runtimeClasspath
+    args '-n', 'ToDo API', '-t', 'default_html', '-u', 'http://localhost:8080', '-f', 'output/docs.html', 'com.sampleapp'
+}
+
+task buildSampleMarkdown (type:JavaExec) {
+    main mainClassName
+    classpath sourceSets.sample.runtimeClasspath
+    args '-n', 'ToDo API', '-t', 'default_markdown', '-u', 'http://localhost:8080', '-f', 'output/docs.md', 'com.sampleapp'
+}
+
+task buildSamples (dependsOn: [buildSampleAngular, buildSampleHTML, buildSampleMarkdown]) {
 }
 
 task sample (type:JavaExec) {

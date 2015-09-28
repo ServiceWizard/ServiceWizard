@@ -1,6 +1,6 @@
 # ${apiName}
 
-<#if introText??>${introText}</#if>
+<#if overview??>${overview}</#if>
 
 <#list services as service>
 ## ${service.name}

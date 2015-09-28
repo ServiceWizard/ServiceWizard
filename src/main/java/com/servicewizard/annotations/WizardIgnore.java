@@ -8,8 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a service class, route method, or method parameter, signifying that it should be skipped
  * for code and documentation generation.
- * 
- * @author forana
+ *
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER })

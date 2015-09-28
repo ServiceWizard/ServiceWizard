@@ -4,9 +4,13 @@ package com.servicewizard.transformer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import com.servicewizard.Log;
+import com.servicewizard.config.TransformerConfiguration;
+import com.servicewizard.config.TransformerType;
 import com.servicewizard.model.Service;
 import com.servicewizard.model.ServiceMethod;
 import com.servicewizard.model.ServiceMethodParameter;
@@ -27,13 +31,16 @@ public class AngularServiceTransformer implements Transformer {
 	public static final String QUERY_PARAMS_OBJECT_NAME = "params";
 
 	@Override
-	public void transform(String moduleName, String urlBase, ServiceModel serviceModel, File outputRoot) throws IOException {
-		createModuleRoot(moduleName, serviceModel, new PrintStream(new File(outputRoot, moduleName + ".js")));
+	public void transformToFile(String urlBase, ServiceModel serviceModel) throws IOException {
+		File root = new File(config.getOutputFilePath());
+		root.mkdirs();
+
+		createModuleRoot(config.getModuleName(), serviceModel,
+				new PrintStream(new File(root, config.getModuleName() + ".js")));
 
 		for (Service service : serviceModel.getServices()) {
-			
-			transform(moduleName, urlBase, service,
-					new PrintStream(new File(outputRoot, service.getName() + ".js")));
+			transform(config.getModuleName(), urlBase, service,
+					new PrintStream(new File(root, config.getModuleName() + "." + service.getName() + ".js")));
 		}
 	}
 
@@ -181,8 +188,8 @@ public class AngularServiceTransformer implements Transformer {
 		// A path param cannot be the same as the generated request body parameter
 		if (method.isHasRequestBody() && method.getPathParameters().stream().anyMatch(
 				param -> param.getName().equals(REQUEST_BODY_PARAM_NAME))) {
-			System.out.println(
-					String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for request body",
+			Log.warning(String.format(
+					"When generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for request body",
 					method.getName(),
 					REQUEST_BODY_PARAM_NAME));
 		}
@@ -190,9 +197,28 @@ public class AngularServiceTransformer implements Transformer {
 		// If query params are present, cannot use generated query params name as a path param
 		if (!method.getQueryParameters().isEmpty()
 				&& method.getPathParameters().stream().anyMatch(param -> param.getName().equals(QUERY_PARAMS_OBJECT_NAME))) {
-			System.out.println(String.format("WARNING when generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
+			Log.warning(String.format(
+					"When generating \"%s\": \"%s\" is a path parameter, which conflicts with the parameter generated for query params",
 					method.getName(),
 					QUERY_PARAMS_OBJECT_NAME));
 		}
+	}
+
+	@Override
+	public void transform(String urlBase, ServiceModel model, Writer writer) {
+		throw new UnsupportedOperationException();
+	}
+
+	private final TransformerConfiguration config;
+
+	public AngularServiceTransformer(TransformerConfiguration config) {
+		// validate that this config will work for this transformer
+		if (config.getTransformerType() != TransformerType.ANGULAR)
+			throw new IllegalArgumentException("Invalid transformer type: " + config.getTransformerType().name());
+		if (config.getModuleName() == null)
+			throw new IllegalArgumentException("Module name is required for angular transformation.");
+		if (config.getOutputFilePath() == null)
+			throw new IllegalArgumentException("Output path is required for angular transformation.");
+		this.config = config;
 	}
 }

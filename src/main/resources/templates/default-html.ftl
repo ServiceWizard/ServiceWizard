@@ -7,8 +7,8 @@
     <body>
         <h1>${apiName} Documentation</h1>
         <hr/>
-        <#if introText??><p>
-            ${introText}
+        <#if overview??><p>
+            ${overview}
         </p></#if>
         <#list services as service>
             <h1>${service.name}</h1>

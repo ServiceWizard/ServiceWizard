@@ -13,12 +13,12 @@ public class ServiceModel {
 		this.apiName = apiName;
 	}
 
-	public String getIntroText() {
-		return introText;
+	public String getOverview() {
+		return overview;
 	}
 
-	public void setIntroText(String introText) {
-		this.introText = introText;
+	public void setOverview(String overview) {
+		this.overview = overview;
 	}
 
 	public List<Service> getServices() {
@@ -31,7 +31,7 @@ public class ServiceModel {
 
 	private String apiName;
 
-	private String introText;
+	private String overview;
 
 	private final List<Service> services;
 }
