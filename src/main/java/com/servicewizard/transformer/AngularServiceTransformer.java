@@ -137,8 +137,6 @@ public class AngularServiceTransformer implements Transformer {
 				output.println(String.format(" * @param %s - %s", param.getName(), param.getDescription()));
 			else
 				output.println(String.format(" * @param %s", param.getName()));
-
-			// TODO document default value
 		}
 
 		// Request body (if required)
@@ -153,14 +151,25 @@ public class AngularServiceTransformer implements Transformer {
 		if (!method.getQueryParameters().isEmpty()) {
 			output.println(String.format(" * @param %s - optional parameters", QUERY_PARAMS_OBJECT_NAME));
 			for (ServiceMethodParameter parameter : method.getQueryParameters()) {
+				// Doc for parameter's description, or empty String
+				String description;
 				if (parameter.getDescription() != null)
-					output.println(String.format(" *   %s - %s", parameter.getName(), parameter.getDescription()));
+					description = String.format(" - %s", parameter.getDescription());
 				else
-					output.println(String.format(" *   %s", parameter.getName()));
+					description = "";
+
+				// The parameter's name, coupled with default value (if present)
+				String name;
+				if (parameter.getDefaultValue() != null)
+					name = String.format("%s=%s", parameter.getName(), parameter.getDefaultValue());
+				else
+					name = String.format("%s", parameter.getName());
+
+				output.println(String.format(" * @param [%s.%s]%s", QUERY_PARAMS_OBJECT_NAME, name, description));
 			}
 		}
 
-		output.println("*/");
+		output.println(" */");
 	}
 
 	private String templateURL(String url) {
