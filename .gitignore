@@ -1,11 +1,10 @@
 .gradle
 
 # intellij
-.ideaServiceWizard.iml
-ServiceWizard.ipr
-ServiceWizard.iws
 .idea
 ServiceWizard.iml
+ServiceWizard.ipr
+ServiceWizard.iws
 build
 output
 /bin/
