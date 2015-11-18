@@ -26,7 +26,7 @@ public class ServiceModel {
 	}
 
 	public ServiceModel() {
-		services = new LinkedList<Service>();
+		services = new LinkedList<>();
 	}
 
 	private String apiName;

@@ -24,6 +24,33 @@
                 <#if method.description??><p>
                     ${method.description}
                 </p></#if>
+
+                <#if method.pathParameters?size &gt; 0>
+                    <p>
+                    <strong>Path Parameters</strong>
+                    <ul>
+                        <#list method.pathParameters as parameter>
+                            <li>${parameter.name}
+                                <#if parameter.description??> - ${parameter.description}</#if>
+                            </li>
+                        </#list>
+                    </ul>
+                    </p>
+                </#if>
+
+                <#if method.queryParameters?size &gt; 0>
+                    <p>
+                    <strong>Query Parameters</strong>
+                    <ul>
+                        <#list method.queryParameters as parameter>
+                            <li>${parameter.name}
+                                <#if parameter.defaultValue??>=${parameter.defaultValue}</#if>
+                                <#if parameter.description??> - ${parameter.description}</#if>
+                            </li>
+                        </#list>
+                    </ul>
+                    </p>
+                </#if>
             </#list>
         </#list>
     </body>
