@@ -33,24 +33,38 @@ public class AngularServiceTransformer implements Transformer {
 	 */
 	public static final String QUERY_PARAMS_OBJECT_NAME = "params";
 
+	/**
+	 * The name of the constant defining the URL base for all service calls
+	 *
+	 * This constant is defined at the module level and injected into all services.
+	 */
+	public static final String URL_BASE_CONSTANT_NAME = "ServiceURLBase";
+
 	@Override
 	public void transformToFile(String urlBase, ServiceModel serviceModel) throws IOException {
 		File root = new File(config.getOutputFilePath());
 		root.mkdirs();
 
-		createModuleRoot(config.getModuleName(), serviceModel,
+		createModuleRoot(
+				config.getModuleName(),
+				urlBase,
+				serviceModel,
 				new PrintStream(new File(root, config.getModuleName() + ".js")));
 
 		for (Service service : serviceModel.getServices()) {
-			transform(config.getModuleName(), urlBase, service,
+			transform(
+					config.getModuleName(),
+					urlBase,
+					service,
 					new PrintStream(new File(root, config.getModuleName() + "." + service.getName() + ".js")));
 		}
 	}
 
-	private void createModuleRoot(String moduleName, ServiceModel serviceModel, PrintStream outputStream)
+	private void createModuleRoot(String moduleName, String urlBase, ServiceModel serviceModel, PrintStream outputStream)
 			throws IOException {
 		try (PrettyPrintStream output = new PrettyPrintStream(outputStream)) {
-			output.println(String.format("angular.module('%s', []);", moduleName));
+			output.println(String.format("angular.module('%s', [])", moduleName));
+			output.println(String.format(".constant('%s', '%s');", URL_BASE_CONSTANT_NAME, urlBase));
 		}
 	}
 
@@ -60,10 +74,12 @@ public class AngularServiceTransformer implements Transformer {
 		addModuleDocumentation(output);
 
 		output.println(String.format("angular.module('%s')", moduleName));
-		output.println(String.format(".factory('%s', ['$http', function($http) {", service.getName()));
+		output.println(String.format(".factory('%s', ['$http', '%s', function($http, %s) {",
+				service.getName(),
+				URL_BASE_CONSTANT_NAME,
+				URL_BASE_CONSTANT_NAME));
 
 		try (Indentation bodyIndent = output.indentBlock()) {
-			output.println(String.format("var urlBase = '%s';", urlBase));
 			output.println("return {");
 
 			try (Indentation returnIndent = output.indentBlock()) {
@@ -99,7 +115,7 @@ public class AngularServiceTransformer implements Transformer {
 						// Request object
 						output.println("var request = {");
 						try (Indentation requestIndent = output.indentBlock()) {
-							output.printListItem(String.format("url: urlBase + %s", templateURL(method.getPath())));
+							output.printListItem(String.format("url: %s + %s", URL_BASE_CONSTANT_NAME, templateURL(method.getPath())));
 							output.printListItem(String.format("method: '%s'", method.getVerb()));
 
 							if (method.isHasRequestBody())
